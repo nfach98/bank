@@ -1,0 +1,55 @@
+name: bank
+description: A new Flutter project.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.16.2 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  #core
+  dio: ^4.0.6
+  path_provider: ^2.0.10
+  shared_preferences: ^2.0.15
+  dartz: ^0.10.1
+  get_it: ^7.2.0
+  equatable: ^2.0.3
+  device_info_plus: ^3.2.3
+  device_information: ^0.0.4
+  permission_handler: ^9.2.0
+  flutter_bloc: ^8.0.1
+  intl: ^0.17.0
+  flutter_screenutil: ^5.1.1
+  sqflite: ^2.0.2+1
+
+  #view
+  cached_network_image: ^3.2.0
+  cupertino_icons: ^1.0.2
+  flutter_svg: ^1.0.3
+  google_fonts:
+  syncfusion_flutter_charts: ^20.1.56
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^1.0.0
+  build_runner: ^2.1.10
+  bloc_test: ^9.0.3
+  mockito: ^5.1.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+  fonts:
+    - family: Encode Sans
+      fonts:
+        - asset: assets/fonts/EncodeSans_SemiExpanded-Regular.ttf
