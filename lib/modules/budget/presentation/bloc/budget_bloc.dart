@@ -1,9 +1,10 @@
-import 'dart:async';
-import 'dart:developer';
-
+import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
+import 'package:bank/modules/budget/domain/usecases/create_budget.dart';
+import 'package:bank/modules/budget/domain/usecases/get_list_budget.dart';
+import 'package:bank/modules/main/domain/entities/category_entity.dart';
+import 'package:bank/modules/main/domain/usecases/get_list_category.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 
 import '../../../period/domain/entities/period_entity.dart';
 import '../../../period/domain/usecases/get_list_period.dart';
@@ -13,8 +14,11 @@ part 'budget_state.dart';
 
 class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
   final GetListPeriod getListPeriod;
+  final GetListCategory getListCategory;
+  final GetListBudget getListBudget;
+  final CreateBudget createBudget;
 
-  BudgetBloc(this.getListPeriod) : super(const BudgetState()) {
+  BudgetBloc(this.getListPeriod, this.getListBudget, this.createBudget, this.getListCategory) : super(const BudgetState()) {
     on<GetListPeriodEvent>((event, emit) async {
       final getListPeriodCase = await getListPeriod.execute();
       emit(getListPeriodCase.fold(
@@ -33,10 +37,53 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
       ));
     });
 
+    on<GetListCategoryEvent>((event, emit) async {
+      final getListCategoryCase = await getListCategory.execute();
+      emit(getListCategoryCase.fold(
+        (l) => state.copyWith(
+          message: l.message,
+        ),
+        (r) => state.copyWith(
+          listCategory: r,
+        ),
+      ));
+    });
+
     on<ChangeDropdownPeriodEvent>((event, emit) async {
       emit(BudgetState(
         selectedPeriod: event.id,
         listPeriod: state.listPeriod,
+      ));
+    });
+
+    on<CreateBudgetEvent>((event, emit) async {
+      final createBudgetCase = await createBudget.execute(CreateBudgetParams(
+        idPeriod: event.idPeriod,
+        idCategory: event.idCategory,
+        name: event.name,
+        amount: event.amount
+      ));
+      emit(createBudgetCase.fold(
+        (l) => state.copyWith(
+          message: l.message,
+        ),
+        (r) => state.copyWith(
+          message: 'success',
+        ),
+      ));
+    });
+
+    on<GetListBudgetEvent>((event, emit) async {
+      final getListBudgetCase = await getListBudget.execute(GetListBudgetParams(
+        idPeriod: event.idPeriod,
+      ));
+      emit(getListBudgetCase.fold(
+        (l) => state.copyWith(
+          message: l.message,
+        ),
+        (r) => state.copyWith(
+          listBudget: r,
+        ),
       ));
     });
   }

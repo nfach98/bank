@@ -19,3 +19,36 @@ class ChangeDropdownPeriodEvent extends BudgetEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class CreateBudgetEvent extends BudgetEvent {
+  final String idPeriod;
+  final String idCategory;
+  final String name;
+  final int amount;
+
+  CreateBudgetEvent({required this.idPeriod, required this.idCategory, required this.name, required this.amount});
+
+  @override
+  List<Object?> get props => [
+    idPeriod,
+    idCategory,
+    name,
+    amount,
+  ];
+}
+
+class GetListBudgetEvent extends BudgetEvent {
+  final String idPeriod;
+
+  const GetListBudgetEvent({required this.idPeriod});
+
+  @override
+  List<Object?> get props => [idPeriod];
+}
+
+class GetListCategoryEvent extends BudgetEvent {
+  const GetListCategoryEvent();
+
+  @override
+  List<Object?> get props => [];
+}

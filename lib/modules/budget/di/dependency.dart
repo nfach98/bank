@@ -1,10 +1,9 @@
+import 'package:bank/modules/budget/data/datasources/budget_local_data_source.dart';
+import 'package:bank/modules/budget/data/repositories/budget_repository_impl.dart';
+import 'package:bank/modules/budget/domain/repositories/budget_repository.dart';
+import 'package:bank/modules/budget/domain/usecases/create_budget.dart';
+import 'package:bank/modules/budget/domain/usecases/get_list_budget.dart';
 import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
-import 'package:bank/modules/period/data/datasources/period_local_data_source.dart';
-import 'package:bank/modules/period/data/repositories/period_repository_impl.dart';
-import 'package:bank/modules/period/domain/repositories/period_repository.dart';
-import 'package:bank/modules/period/domain/usecases/create_period.dart';
-import 'package:bank/modules/period/domain/usecases/get_list_period.dart';
-import 'package:bank/modules/period/presentation/bloc/period_bloc.dart';
 
 import '../../../injection_container.dart';
 
@@ -13,24 +12,24 @@ class InjectDependencyBudget extends IconfigureDependencies {
 
   @override
   injectBloc() {
-    sl.registerFactory(() => BudgetBloc(sl()));
+    sl.registerFactory(() => BudgetBloc(sl(), sl(), sl(), sl()));
   }
 
   @override
   injectDataSource() {
-    // sl.registerLazySingleton<PeriodLocalDataSource>(
-    //   () => PeriodLocalDataSourceImpl());
+    sl.registerLazySingleton<BudgetLocalDataSource>(
+      () => BudgetLocalDataSourceImpl());
   }
 
   @override
   injectRepository() {
-    // sl.registerLazySingleton<PeriodRepository>(() => PeriodRepositoryImpl(sl()));
+    sl.registerLazySingleton<BudgetRepository>(() => BudgetRepositoryImpl(sl()));
   }
 
   @override
   injectUseCase() {
-    // sl.registerLazySingleton(() => CreatePeriod(sl()));
-    // sl.registerLazySingleton(() => GetListPeriod(sl()));
+    sl.registerLazySingleton(() => CreateBudget(sl()));
+    sl.registerLazySingleton(() => GetListBudget(sl()));
   }
 
   @override
