@@ -38,6 +38,8 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
           String? selectedCategory = state.selectedCategory;
           List<CategoryEntity>? listCategory = state.listCategory;
 
+          print(selectedCategory);
+
           return Scaffold(
             appBar: AppBar(),
             body: Padding(
@@ -48,11 +50,12 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                   FractionallySizedBox(
                     widthFactor: 1.0,
                     child: Card(
-                      margin: const EdgeInsets.all(12).r,
+                      margin: const EdgeInsets.all(4).r,
                       child: Padding(
                         padding: const EdgeInsets.all(8).r,
                         child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
+                              value: selectedCategory,
                               onChanged: (value) {
                                 _budgetBloc.add(ChangeDropdownCategoryEvent(
                                   value ?? ''
@@ -63,10 +66,10 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                                 child: Text(
                                   '${e.name}',
                                   style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                                    fontWeight: e.id == selectedPeriod
+                                    fontWeight: e.id == selectedCategory
                                       ? FontWeight.w600
                                       : FontWeight.w400,
-                                    color: e.id == selectedPeriod
+                                    color: e.id == selectedCategory
                                       ? Theme.of(context).primaryColor
                                       : BankTheme.colors.black,
                                   ),
@@ -82,7 +85,6 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                                   ),
                                 ),
                               )).toList() ?? [],
-                              value: selectedCategory,
                             )
                         ),
                       ),

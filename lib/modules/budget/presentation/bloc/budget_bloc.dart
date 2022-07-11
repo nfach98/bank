@@ -59,6 +59,7 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
     on<ChangeDropdownCategoryEvent>((event, emit) async {
       emit(BudgetState(
         selectedCategory: event.id,
+        listCategory: state.listCategory,
       ));
     });
 
