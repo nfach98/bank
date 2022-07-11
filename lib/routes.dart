@@ -1,5 +1,5 @@
 import 'package:bank/common/constants/route_constants.dart';
-import 'package:bank/features/main/presentation/main_page.dart';
+import 'package:bank/modules/main/presentation/main_page.dart';
 import 'package:flutter/material.dart';
 
 class AppRouter {

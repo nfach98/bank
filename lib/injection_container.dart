@@ -1,5 +1,7 @@
 import 'package:bank/common/utils/dio_config.dart';
-import 'package:bank/features/main/di/dependency.dart';
+import 'package:bank/modules/budget/di/dependency.dart';
+import 'package:bank/modules/main/di/dependency.dart';
+import 'package:bank/modules/period/di/dependency.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,4 +24,6 @@ Future configureDependencies() async {
 
   //! features dependencies
   InjectDependencyMain().inject();
+  InjectDependencyPeriod().inject();
+  InjectDependencyBudget().inject();
 }
