@@ -56,6 +56,12 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
       ));
     });
 
+    on<ChangeDropdownCategoryEvent>((event, emit) async {
+      emit(BudgetState(
+        selectedCategory: event.id,
+      ));
+    });
+
     on<CreateBudgetEvent>((event, emit) async {
       final createBudgetCase = await createBudget.execute(CreateBudgetParams(
         idPeriod: event.idPeriod,

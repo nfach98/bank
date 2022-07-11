@@ -1,5 +1,6 @@
 import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
 import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
+import 'package:bank/modules/budget/presentation/budget_form_page.dart';
 import 'package:bank/modules/main/domain/entities/category_entity.dart';
 import 'package:bank/modules/period/domain/entities/period_entity.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class _BudgetPageState extends State<BudgetPage> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _budgetBloc = BlocProvider.of<BudgetBloc>(context);
       _budgetBloc.add(const GetListPeriodEvent());
+      _budgetBloc.add(const GetListCategoryEvent());
     });
   }
 
@@ -69,12 +71,19 @@ class _BudgetPageState extends State<BudgetPage> {
                             ));
                           },
                           items: listPeriod?.map((e) => DropdownMenuItem(
-                              value: e.id,
-                              child: Text(
-                                '${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateStart ?? ''))}'
-                                    ' - ${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
-                                style: Theme.of(context).textTheme.bodyText1,
-                              )
+                            value: e.id,
+                            child: Text(
+                              '${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateStart ?? ''))}'
+                                  ' - ${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
+                              style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                                fontWeight: e.id == selectedPeriod
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                                color: e.id == selectedPeriod
+                                  ? Theme.of(context).primaryColor
+                                  : BankTheme.colors.black,
+                              ),
+                            )
                           )).toList(),
                           selectedItemBuilder: (_) => listPeriod?.map((e) => Container(
                             alignment: Alignment.centerLeft,
@@ -128,10 +137,10 @@ class _BudgetPageState extends State<BudgetPage> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              // await Navigator.push(
-              //     context,
-              //     MaterialPageRoute(builder: (_) => PeriodFormPage())
-              // );
+              await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => BudgetFormPage())
+              );
               _budgetBloc.add(GetListBudgetEvent(
                 idPeriod: selectedPeriod ?? ''
               ));
