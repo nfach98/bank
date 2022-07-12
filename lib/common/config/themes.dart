@@ -45,6 +45,7 @@ class _Colors {
   final green = _Materialize.createMaterialColor(0xFF32C6C3);
   final white = const Color(0xffF9F9F9);
   final black = const Color(0xff2f2f2f);
+  final grey = const Color(0xff919191);
 }
 
 class _TextStyles {

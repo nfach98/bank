@@ -29,6 +29,15 @@ class ChangeDropdownCategoryEvent extends BudgetEvent {
   List<Object?> get props => [id];
 }
 
+class ChangeTypeCategoryEvent extends BudgetEvent {
+  final String id;
+
+  const ChangeTypeCategoryEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}
+
 class CreateBudgetEvent extends BudgetEvent {
   final String idPeriod;
   final String idCategory;

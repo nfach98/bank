@@ -45,21 +45,26 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
         ),
         (r) => state.copyWith(
           listCategory: r,
+          listTypeCategory: r.map((e) => e.type ?? '').toSet().toList(),
         ),
       ));
     });
 
     on<ChangeDropdownPeriodEvent>((event, emit) async {
-      emit(BudgetState(
+      emit(state.copyWith(
         selectedPeriod: event.id,
-        listPeriod: state.listPeriod,
       ));
     });
 
     on<ChangeDropdownCategoryEvent>((event, emit) async {
-      emit(BudgetState(
+      emit(state.copyWith(
         selectedCategory: event.id,
-        listCategory: state.listCategory,
+      ));
+    });
+
+    on<ChangeTypeCategoryEvent>((event, emit) async {
+      emit(state.copyWith(
+        selectedTypeCategory: event.id,
       ));
     });
 
@@ -76,6 +81,8 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
         ),
         (r) => state.copyWith(
           message: 'success',
+          listCategory: state.listCategory,
+          listPeriod: state.listPeriod,
         ),
       ));
     });
@@ -90,6 +97,8 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
         ),
         (r) => state.copyWith(
           listBudget: r,
+          listCategory: state.listCategory,
+          listPeriod: state.listPeriod,
         ),
       ));
     });

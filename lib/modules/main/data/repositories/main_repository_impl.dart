@@ -21,6 +21,7 @@ class MainRepositoryImpl implements MainRepository {
         id: e.id,
         name: e.name,
         type: e.type,
+        idIcon: e.idIcon,
       )).toList());
     } on AppError catch (e) {
       return Left(e);

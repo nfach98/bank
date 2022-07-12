@@ -6,6 +6,7 @@ import 'package:bank/modules/main/presentation/widgets/menu_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../forecast/presentation/forecast_page.dart';
 import '../../period/presentation/period_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -114,8 +115,10 @@ class _MainPageState extends State<MainPage>
                                 return const DashboardPage();
                               } else if (state.currentIndex == 1) {
                                 return const PeriodPage();
-                              } else {
+                              } else if (state.currentIndex == 2) {
                                 return const BudgetPage();
+                              } else {
+                                return const ForecastPage();
                               }
                             }
                           ),

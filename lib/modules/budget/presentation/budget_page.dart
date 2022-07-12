@@ -27,6 +27,7 @@ class _BudgetPageState extends State<BudgetPage> {
       _budgetBloc = BlocProvider.of<BudgetBloc>(context);
       _budgetBloc.add(const GetListPeriodEvent());
       _budgetBloc.add(const GetListCategoryEvent());
+      _budgetBloc.add(const ChangeTypeCategoryEvent('1'));
     });
   }
 
@@ -138,9 +139,9 @@ class _BudgetPageState extends State<BudgetPage> {
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
               await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => BudgetFormPage())
-              );
+                context,
+                MaterialPageRoute(builder: (_) => BudgetFormPage()
+              ));
               _budgetBloc.add(GetListBudgetEvent(
                 idPeriod: selectedPeriod ?? ''
               ));
