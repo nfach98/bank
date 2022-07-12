@@ -1,4 +1,3 @@
-import 'package:bank/common/utils/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -46,15 +45,7 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
           return Scaffold(
             appBar: AppBar(
               elevation: 0,
-              backgroundColor: Colors.transparent,
-              foregroundColor: BankTheme.colors.green,
-              title: Text(
-                'New Budget',
-                style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
+              title: const Text('New Budget'),
             ),
             body: Column(
               children: [

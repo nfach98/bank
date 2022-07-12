@@ -21,6 +21,7 @@ class BankTheme {
     appBarTheme: AppBarTheme(
       foregroundColor: BankTheme.colors.white,
       backgroundColor: BankTheme.colors.green,
+
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
