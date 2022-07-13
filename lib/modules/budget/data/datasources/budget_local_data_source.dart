@@ -2,7 +2,7 @@ import 'package:bank/modules/budget/data/models/budget_model.dart';
 import 'package:hive/hive.dart';
 
 abstract class BudgetLocalDataSource {
-  Future<int> createBudget({required String idCategory, required String name, required int amount});
+  Future<int> createBudget({required String idCategory, required String type, required String name, required int amount});
 
   Future<List<BudgetModel>> getListBudget();
 }
@@ -19,6 +19,7 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
       return BudgetModel(
         id: value['id'],
         idCategory: value['id_category'],
+        type: value['type'],
         name: value['name'],
         amount: value['amount'],
       );
@@ -28,9 +29,10 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
   }
 
   @override
-  Future<int> createBudget({required String idCategory, required String name, required int amount}) async {
+  Future<int> createBudget({required String idCategory, required String type, required String name, required int amount}) async {
     int key = await boxBudget.add(BudgetModel(
       idCategory: idCategory,
+      type: type,
       name: name,
       amount: amount,
     ).toMap);

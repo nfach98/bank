@@ -24,4 +24,9 @@ extension NumX on num {
     return NumberFormat.currency(locale: 'id', symbol: 'Rp ', decimalDigits: 0)
         .format(this);
   }
+
+  String toSeparatedDecimal() {
+    final formatter = NumberFormat("#,###");
+    return formatter.format(this);
+  }
 }

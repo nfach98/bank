@@ -40,14 +40,16 @@ class ChangeTypeCategoryEvent extends BudgetEvent {
 
 class CreateBudgetEvent extends BudgetEvent {
   final String idCategory;
+  final String type;
   final String name;
   final int amount;
 
-  const CreateBudgetEvent({required this.idCategory, required this.name, required this.amount});
+  const CreateBudgetEvent({required this.idCategory, required this.type, required this.name, required this.amount});
 
   @override
   List<Object?> get props => [
     idCategory,
+    type,
     name,
     amount,
   ];

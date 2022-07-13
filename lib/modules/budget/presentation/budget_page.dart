@@ -1,13 +1,11 @@
 import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
 import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
 import 'package:bank/modules/budget/presentation/budget_form_page.dart';
+import 'package:bank/modules/budget/presentation/widgets/card_list_budget.dart';
 import 'package:bank/modules/main/domain/entities/category_entity.dart';
-import 'package:bank/modules/period/domain/entities/period_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 
 import '../../../common/config/themes.dart';
 
@@ -26,6 +24,7 @@ class _BudgetPageState extends State<BudgetPage> {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _budgetBloc = BlocProvider.of<BudgetBloc>(context);
+      _budgetBloc.add(const GetListBudgetEvent());
       _budgetBloc.add(const GetListPeriodEvent());
       _budgetBloc.add(const GetListCategoryEvent());
       _budgetBloc.add(const ChangeTypeCategoryEvent('1'));
@@ -37,6 +36,9 @@ class _BudgetPageState extends State<BudgetPage> {
     return BlocBuilder<BudgetBloc, BudgetState>(
       builder: (_, state) {
         List<CategoryEntity>? listCategory = state.listCategory;
+        List<String>? listCategoryTypes = listCategory?.map(
+          (e) => e.type ?? ''
+        ).toSet().toList();
         List<BudgetEntity>? listBudget = state.listBudget;
 
         return Scaffold(
@@ -54,53 +56,22 @@ class _BudgetPageState extends State<BudgetPage> {
               ),
             ),
           ),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: listBudget?.length ?? 0,
-                  itemBuilder: (_, index) {
-                    BudgetEntity? budget = listBudget?[index];
-                    CategoryEntity? category = listCategory?.where(
-                      (e) => e.id == budget?.idCategory
-                    ).toList()[0];
+          body: ListView.separated(
+            itemCount: listCategoryTypes?.length ?? 0,
+            itemBuilder: (_, index) {
+              List<BudgetEntity>? list =
+              listBudget?.where((e) => e.type == listCategoryTypes?[index]).toList();
 
-                    return budget != null
-                      ? Card(
-                        margin: EdgeInsets.symmetric(horizontal: 12.w),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0).r,
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: Theme.of(context).primaryColor,
-                                child: FaIcon(
-                                  IconDataSolid(category?.idIcon ?? 0),
-                                  size: 16.r,
-                                  color: BankTheme.colors.white,
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              Expanded(
-                                child: Text(
-                                  budget.name ?? '',
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                budget.amount.toString(),
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                      : Container();
-                  },
-                )
-              )
-            ],
+              if (list != null && list.isNotEmpty) {
+                return CardListBudget(
+                  listBudget: list,
+                  categoryType: listCategoryTypes?[index] ?? '',
+                );
+              }
+
+              return Container();
+            },
+            separatorBuilder: (_, index) => SizedBox(height: 12.h),
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {

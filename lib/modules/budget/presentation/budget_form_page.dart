@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../common/config/themes.dart';
+import '../../../common/utils/currency_formatter.dart';
 import '../../main/domain/entities/category_entity.dart';
 import 'bloc/budget_bloc.dart';
 
@@ -35,7 +36,6 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
       },
       child: BlocBuilder<BudgetBloc, BudgetState>(
         builder: (_, state) {
-          String? selectedPeriod = state.selectedPeriod;
           String? selectedCategory = state.selectedCategory;
           String? selectedTypeCategory = state.selectedTypeCategory;
           List<CategoryEntity>? listCategory = state.listCategory?.where(
@@ -215,11 +215,12 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                   widthFactor: 1.0,
                   child: TextButton(
                     onPressed: () {
-                      if (selectedCategory != null
+                      if (selectedCategory != null && selectedTypeCategory != null
                           && _nameController.text.isNotEmpty
                           && _amountController.text.isNotEmpty) {
                         _budgetBloc.add(CreateBudgetEvent(
                           idCategory: selectedCategory,
+                          type: selectedTypeCategory,
                           name: _nameController.text,
                           amount: int.parse(_amountController.text),
                         ));

@@ -5,13 +5,13 @@ class MenuList extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onMenuItemClicked;
   final List<String> listMenu = [
-    'Beranda',
-    'Periode',
-    'Anggaran',
-    'Prakiraan',
-    'Realisasi',
-    'Laporan',
-    'Pengaturan',
+    'Dashboard',
+    'Period',
+    'Budget',
+    'Forecast',
+    'Actual',
+    'Report',
+    'Setting',
   ];
 
   MenuList(

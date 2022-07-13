@@ -17,6 +17,7 @@ class BudgetRepositoryImpl implements BudgetRepository {
       return Right(result.map((e) => BudgetEntity(
         id: e.id,
         idCategory: e.idCategory,
+        type: e.type,
         name: e.name,
         amount: e.amount,
       )).toList());
@@ -28,12 +29,14 @@ class BudgetRepositoryImpl implements BudgetRepository {
   @override
   Future<Either<AppError, int>> createBudget({
     required String idCategory,
+    required String type,
     required String name,
     required int amount,
   }) async {
     try {
       final result = await _localDataSource.createBudget(
         idCategory: idCategory,
+        type: type,
         name: name,
         amount: amount
       );

@@ -5,5 +5,5 @@ import '../../../../common/errors/app_error.dart';
 
 abstract class BudgetRepository {
   Future<Either<AppError, List<BudgetEntity>>> getListBudget();
-  Future<Either<AppError, int>> createBudget({required String idCategory, required String name, required int amount});
+  Future<Either<AppError, int>> createBudget({required String idCategory, required String type, required String name, required int amount});
 }

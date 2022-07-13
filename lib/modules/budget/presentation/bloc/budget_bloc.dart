@@ -71,6 +71,7 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
     on<CreateBudgetEvent>((event, emit) async {
       final createBudgetCase = await createBudget.execute(CreateBudgetParams(
         idCategory: event.idCategory,
+        type: event.type,
         name: event.name,
         amount: event.amount
       ));
@@ -80,8 +81,6 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
         ),
         (r) => state.copyWith(
           message: 'success',
-          listCategory: state.listCategory,
-          listPeriod: state.listPeriod,
         ),
       ));
     });
@@ -94,8 +93,6 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
         ),
         (r) => state.copyWith(
           listBudget: r,
-          listCategory: state.listCategory,
-          listPeriod: state.listPeriod,
         ),
       ));
     });
