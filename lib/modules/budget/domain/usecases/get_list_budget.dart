@@ -9,13 +9,7 @@ class GetListBudget {
 
   GetListBudget(this._repository);
 
-  Future<Either<AppError, List<BudgetEntity>>> execute(GetListBudgetParams params) async {
-    return _repository.getListBudget(idPeriod: params.idPeriod);
+  Future<Either<AppError, List<BudgetEntity>>> execute() async {
+    return _repository.getListBudget();
   }
-}
-
-class GetListBudgetParams {
-  final String idPeriod;
-
-  GetListBudgetParams({required this.idPeriod});
 }

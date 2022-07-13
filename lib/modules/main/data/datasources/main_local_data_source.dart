@@ -19,7 +19,7 @@ class MainLocalDataSourceImpl implements MainLocalDataSource {
       boxCategories.add(CategoryModel(name: 'Health', type: '1', idIcon: 0xf469).toMap);
       boxCategories.add(CategoryModel(name: 'Housing', type: '1', idIcon: 0xf015).toMap);
       boxCategories.add(CategoryModel(name: 'Transportation', type: '1', idIcon: 0xf1b9).toMap);
-      boxCategories.add(CategoryModel(name: 'Tax', type: '1', idIcon: 0xf0d6).toMap);
+      boxCategories.add(CategoryModel(name: 'Tax', type: '1', idIcon: 0xf571).toMap);
       boxCategories.add(CategoryModel(name: 'Social', type: '1', idIcon: 0xf0c0).toMap);
       boxCategories.add(CategoryModel(name: 'Education', type: '1', idIcon: 0xf19d).toMap);
       boxCategories.add(CategoryModel(name: 'Shopping', type: '1', idIcon: 0xf290).toMap);

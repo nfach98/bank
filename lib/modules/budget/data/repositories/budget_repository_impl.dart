@@ -11,13 +11,12 @@ class BudgetRepositoryImpl implements BudgetRepository {
   BudgetRepositoryImpl(this._localDataSource);
 
   @override
-  Future<Either<AppError, List<BudgetEntity>>> getListBudget({required String idPeriod}) async {
+  Future<Either<AppError, List<BudgetEntity>>> getListBudget() async {
     try {
-      final result = await _localDataSource.getListBudget(idPeriod: idPeriod);
+      final result = await _localDataSource.getListBudget();
       return Right(result.map((e) => BudgetEntity(
         id: e.id,
         idCategory: e.idCategory,
-        idPeriod: e.idPeriod,
         name: e.name,
         amount: e.amount,
       )).toList());
@@ -28,14 +27,12 @@ class BudgetRepositoryImpl implements BudgetRepository {
 
   @override
   Future<Either<AppError, int>> createBudget({
-    required String idPeriod,
     required String idCategory,
     required String name,
     required int amount,
   }) async {
     try {
       final result = await _localDataSource.createBudget(
-        idPeriod: idPeriod,
         idCategory: idCategory,
         name: name,
         amount: amount

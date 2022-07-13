@@ -26,12 +26,12 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
           message: l.message,
         ),
         (r) {
-          String? selected = r.where((e) => (DateTime.parse(e.dateStart ?? '').isBefore(DateTime.now())
-              || DateTime.parse(e.dateStart ?? '').isAtSameMomentAs(DateTime.now()))
-              && DateTime.parse(e.dateEnd ?? '').isAfter(DateTime.now())).toList()[0].id;
+          // String? selected = r.where((e) => (DateTime.parse(e.dateStart ?? '').isBefore(DateTime.now())
+          //     || DateTime.parse(e.dateStart ?? '').isAtSameMomentAs(DateTime.now()))
+          //     && DateTime.parse(e.dateEnd ?? '').isAfter(DateTime.now())).toList()[0].id;
           return state.copyWith(
             listPeriod: r,
-            selectedPeriod: selected,
+            // selectedPeriod: selected,
           );
         },
       ));
@@ -70,7 +70,6 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
 
     on<CreateBudgetEvent>((event, emit) async {
       final createBudgetCase = await createBudget.execute(CreateBudgetParams(
-        idPeriod: event.idPeriod,
         idCategory: event.idCategory,
         name: event.name,
         amount: event.amount
@@ -88,9 +87,7 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
     });
 
     on<GetListBudgetEvent>((event, emit) async {
-      final getListBudgetCase = await getListBudget.execute(GetListBudgetParams(
-        idPeriod: event.idPeriod,
-      ));
+      final getListBudgetCase = await getListBudget.execute();
       emit(getListBudgetCase.fold(
         (l) => state.copyWith(
           message: l.message,

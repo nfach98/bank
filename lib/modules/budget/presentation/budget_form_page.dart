@@ -215,13 +215,16 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                   widthFactor: 1.0,
                   child: TextButton(
                     onPressed: () {
-                      // if (state.startDate != null && state.endDate != null) {
-                      //   _budgetBloc.add(CreatePeriodEvent(
-                      //     startDate: state.startDate!,
-                      //     endDate: state.endDate!,
-                      //   ));
-                      // }
-                      _budgetBloc.add(ChangeDropdownCategoryEvent(''));
+                      if (selectedCategory != null
+                          && _nameController.text.isNotEmpty
+                          && _amountController.text.isNotEmpty) {
+                        _budgetBloc.add(CreateBudgetEvent(
+                          idCategory: selectedCategory,
+                          name: _nameController.text,
+                          amount: int.parse(_amountController.text),
+                        ));
+                        _budgetBloc.add(const ChangeDropdownCategoryEvent(''));
+                      }
                     },
                     style: Theme.of(context).textButtonTheme.style?.copyWith(
                       padding: MaterialStateProperty.all(

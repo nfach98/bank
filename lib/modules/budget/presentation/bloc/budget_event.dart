@@ -39,16 +39,14 @@ class ChangeTypeCategoryEvent extends BudgetEvent {
 }
 
 class CreateBudgetEvent extends BudgetEvent {
-  final String idPeriod;
   final String idCategory;
   final String name;
   final int amount;
 
-  CreateBudgetEvent({required this.idPeriod, required this.idCategory, required this.name, required this.amount});
+  const CreateBudgetEvent({required this.idCategory, required this.name, required this.amount});
 
   @override
   List<Object?> get props => [
-    idPeriod,
     idCategory,
     name,
     amount,
@@ -56,12 +54,10 @@ class CreateBudgetEvent extends BudgetEvent {
 }
 
 class GetListBudgetEvent extends BudgetEvent {
-  final String idPeriod;
-
-  const GetListBudgetEvent({required this.idPeriod});
+  const GetListBudgetEvent();
 
   @override
-  List<Object?> get props => [idPeriod];
+  List<Object?> get props => [];
 }
 
 class GetListCategoryEvent extends BudgetEvent {

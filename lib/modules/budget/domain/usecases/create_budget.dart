@@ -11,7 +11,6 @@ class CreateBudget {
 
   Future<Either<AppError, int>> execute(CreateBudgetParams params) async {
     return _repository.createBudget(
-      idPeriod: params.idPeriod,
       idCategory: params.idCategory,
       name: params.name,
       amount: params.amount,
@@ -20,10 +19,9 @@ class CreateBudget {
 }
 
 class CreateBudgetParams {
-  final String idPeriod;
   final String idCategory;
   final String name;
   final int amount;
 
-  CreateBudgetParams({required this.idPeriod, required this.idCategory, required this.name, required this.amount});
+  CreateBudgetParams({required this.idCategory, required this.name, required this.amount});
 }
