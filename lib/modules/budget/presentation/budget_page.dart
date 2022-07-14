@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bank/common/utils/currency_formatter.dart';
 import 'package:bank/common/utils/extensions.dart';
 import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
 import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
@@ -49,14 +50,26 @@ class _BudgetPageState extends State<BudgetPage> {
         List<BudgetEntity>? listAllocation = listBudget?.where(
           (e) => e.type == '1' || e.type == '3'
         ).toList();
+        List<BudgetEntity>? listIncome = listBudget?.where(
+          (e) => e.type == '2'
+        ).toList();
 
-        Map? groupedAllocation;
+        Map? mapGroupedAllocation;
         int totalAllocation = 0;
 
         if (listAllocation != null && listAllocation.isNotEmpty) {
-          groupedAllocation = groupBy(listAllocation, (e) => (e as BudgetEntity).idCategory);
+          mapGroupedAllocation = groupBy(listAllocation, (e) => (e as BudgetEntity).idCategory);
           totalAllocation = listAllocation.map((e) => e.amount ?? 0).reduce(
           (value, element) => value + element);
+        }
+
+        int remaining = 0;
+        if (listIncome != null && listIncome.isNotEmpty) {
+          int income = listIncome.map((e) => e.amount ?? 0).reduce((p, n) => p + n);
+          int outcome = listAllocation != null && listAllocation.isNotEmpty
+            ? listAllocation.map((e) => e.amount ?? 0).reduce((p, n) => p + n)
+            : 0;
+          remaining = income - outcome;
         }
 
         return Scaffold(
@@ -98,7 +111,7 @@ class _BudgetPageState extends State<BudgetPage> {
                   separatorBuilder: (_, index) => SizedBox(height: 12.h),
                 ),
                 SizedBox(height: 12.h),
-                if (groupedAllocation != null && groupedAllocation.isNotEmpty) Card(
+                if (mapGroupedAllocation != null && mapGroupedAllocation.isNotEmpty) Card(
                   margin: EdgeInsets.symmetric(horizontal: 16.w),
                   elevation: 2,
                   child: Padding(
@@ -124,7 +137,7 @@ class _BudgetPageState extends State<BudgetPage> {
                               ),
                               sectionsSpace: 0,
                               centerSpaceRadius: 0,
-                              sections: groupedAllocation.entries.map((e) {
+                              sections: mapGroupedAllocation.entries.map((e) {
                                 int value = (e.value as List<BudgetEntity>)
                                     .map((e) => e.amount ?? 0)
                                     .reduce((value, element) => value + element);
@@ -135,9 +148,11 @@ class _BudgetPageState extends State<BudgetPage> {
 
                                 return PieChartSectionData(
                                   color: Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-                                  value: value / totalAllocation * 100,
-                                  title: '${category?.name}\n'
-                                      '(${percentage.toStringAsFixed(2)}.%)',
+                                  value: percentage,
+                                  title: percentage > 20
+                                    ? '${category?.name}\n'
+                                      '(${percentage.toStringAsFixed(2)}.%)'
+                                    : '',
                                   radius: context.screenWidth / 3,
                                   titleStyle: TextStyle(
                                     fontSize: 12.sp,
@@ -149,11 +164,59 @@ class _BudgetPageState extends State<BudgetPage> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 20.h),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Remaining budget'
+                              ),
+                            ),
+                            Text(
+                              remaining.toSeparatedDecimal(),
+                              style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12.h),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: mapGroupedAllocation.values.length,
+                          itemBuilder: (_, index) {
+                            List<BudgetEntity> budgets = mapGroupedAllocation?.values.toList()[index] as List<BudgetEntity>;
+                            int value = budgets.map((e) => e.amount ?? 0)
+                                .reduce((value, element) => value + element);
+                            CategoryEntity? category = listCategory?.firstWhere(
+                                    (c) => c.id == budgets[0].idCategory
+                            );
+                            double percentage = value / totalAllocation * 100;
+
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                      category?.name ?? ''
+                                  ),
+                                ),
+                                Text(
+                                  '${percentage.toStringAsFixed(2)} %',
+                                  style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                          separatorBuilder: (_, index) => SizedBox(height: 4.h),
+                        ),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: 80.h),
               ],
             ),
           ),

@@ -30,7 +30,6 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
         amount: value['amount'],
       );
     }).toList();
-    log(boxBudget.keys.toString(), name: 'AAA');
 
     return list;
   }
