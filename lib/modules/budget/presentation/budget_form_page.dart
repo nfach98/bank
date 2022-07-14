@@ -263,7 +263,7 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                             && category?.type == selectedTypeCategory
                             && _nameController.text.isNotEmpty
                             && _amountController.text.isNotEmpty
-                            && (isIncome || isSufficientBudget)
+                            // && (isIncome || isSufficientBudget)
                         ) {
                           if (widget.budget != null) {
                             _budgetBloc.add(UpdateBudgetEvent(
@@ -282,13 +282,14 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                               amount: int.parse(_amountController.text),
                             ));
                           }
-                        } else if (!isSufficientBudget) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text(
-                              'Your budget is insufficient to add this plan'
-                            ),
-                          ));
                         }
+                        // else if (!isSufficientBudget) {
+                        //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        //     content: Text(
+                        //       'Your budget is insufficient to add this plan'
+                        //     ),
+                        //   ));
+                        // }
                       },
                       style: Theme.of(context).textButtonTheme.style?.copyWith(
                         padding: MaterialStateProperty.all(

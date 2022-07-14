@@ -64,13 +64,13 @@ class _BudgetPageState extends State<BudgetPage> {
         }
 
         int remaining = 0;
-        if (listIncome != null && listIncome.isNotEmpty) {
-          int income = listIncome.map((e) => e.amount ?? 0).reduce((p, n) => p + n);
-          int outcome = listAllocation != null && listAllocation.isNotEmpty
-            ? listAllocation.map((e) => e.amount ?? 0).reduce((p, n) => p + n)
-            : 0;
-          remaining = income - outcome;
-        }
+        int income = listIncome != null && listIncome.isNotEmpty
+          ? listIncome.map((e) => e.amount ?? 0).reduce((p, n) => p + n)
+          : 0;
+        int outcome = listAllocation != null && listAllocation.isNotEmpty
+          ? listAllocation.map((e) => e.amount ?? 0).reduce((p, n) => p + n)
+          : 0;
+        remaining = income - outcome;
 
         return Scaffold(
           backgroundColor: Colors.transparent,
@@ -149,7 +149,7 @@ class _BudgetPageState extends State<BudgetPage> {
                                 return PieChartSectionData(
                                   color: Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
                                   value: percentage,
-                                  title: percentage > 20
+                                  title: percentage > 15
                                     ? '${category?.name}\n'
                                       '(${percentage.toStringAsFixed(2)}.%)'
                                     : '',
@@ -165,9 +165,9 @@ class _BudgetPageState extends State<BudgetPage> {
                           ),
                         ),
                         SizedBox(height: 20.h),
-                        Row(
+                        if (remaining != 0) Row(
                           children: [
-                            Expanded(
+                            const Expanded(
                               child: Text(
                                 'Remaining budget'
                               ),
@@ -176,6 +176,9 @@ class _BudgetPageState extends State<BudgetPage> {
                               remaining.toSeparatedDecimal(),
                               style: Theme.of(context).textTheme.bodyText1?.copyWith(
                                 fontWeight: FontWeight.w600,
+                                color: remaining < 0
+                                  ? Colors.red
+                                  : BankTheme.colors.black,
                               ),
                             ),
                           ],
