@@ -6,13 +6,15 @@ import 'package:bank/modules/budget/domain/usecases/get_list_budget.dart';
 import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
 
 import '../../../injection_container.dart';
+import '../domain/usecases/delete_budget.dart';
+import '../domain/usecases/update_budget.dart';
 
 class InjectDependencyBudget extends IconfigureDependencies {
   InjectDependencyBudget();
 
   @override
   injectBloc() {
-    sl.registerFactory(() => BudgetBloc(sl(), sl(), sl(), sl()));
+    sl.registerFactory(() => BudgetBloc(sl(), sl(), sl(), sl(), sl(), sl()));
   }
 
   @override
@@ -29,6 +31,8 @@ class InjectDependencyBudget extends IconfigureDependencies {
   @override
   injectUseCase() {
     sl.registerLazySingleton(() => CreateBudget(sl()));
+    sl.registerLazySingleton(() => UpdateBudget(sl()));
+    sl.registerLazySingleton(() => DeleteBudget(sl()));
     sl.registerLazySingleton(() => GetListBudget(sl()));
   }
 

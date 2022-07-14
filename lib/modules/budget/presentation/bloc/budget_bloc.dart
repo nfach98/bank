@@ -1,6 +1,8 @@
 import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
 import 'package:bank/modules/budget/domain/usecases/create_budget.dart';
+import 'package:bank/modules/budget/domain/usecases/delete_budget.dart';
 import 'package:bank/modules/budget/domain/usecases/get_list_budget.dart';
+import 'package:bank/modules/budget/domain/usecases/update_budget.dart';
 import 'package:bank/modules/main/domain/entities/category_entity.dart';
 import 'package:bank/modules/main/domain/usecases/get_list_category.dart';
 import 'package:bloc/bloc.dart';
@@ -17,8 +19,17 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
   final GetListCategory getListCategory;
   final GetListBudget getListBudget;
   final CreateBudget createBudget;
+  final UpdateBudget updateBudget;
+  final DeleteBudget deleteBudget;
 
-  BudgetBloc(this.getListPeriod, this.getListBudget, this.createBudget, this.getListCategory) : super(const BudgetState()) {
+  BudgetBloc(
+      this.getListPeriod,
+      this.getListBudget,
+      this.createBudget,
+      this.getListCategory,
+      this.updateBudget,
+      this.deleteBudget,
+    ) : super(const BudgetState()) {
     on<GetListPeriodEvent>((event, emit) async {
       final getListPeriodCase = await getListPeriod.execute();
       emit(getListPeriodCase.fold(
@@ -26,12 +37,8 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
           message: l.message,
         ),
         (r) {
-          // String? selected = r.where((e) => (DateTime.parse(e.dateStart ?? '').isBefore(DateTime.now())
-          //     || DateTime.parse(e.dateStart ?? '').isAtSameMomentAs(DateTime.now()))
-          //     && DateTime.parse(e.dateEnd ?? '').isAfter(DateTime.now())).toList()[0].id;
           return state.copyWith(
             listPeriod: r,
-            // selectedPeriod: selected,
           );
         },
       ));
@@ -56,13 +63,13 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
       ));
     });
 
-    on<ChangeDropdownCategoryEvent>((event, emit) async {
+    on<ChangeCategoryEvent>((event, emit) async {
       emit(state.copyWith(
         selectedCategory: event.id,
       ));
     });
 
-    on<ChangeTypeCategoryEvent>((event, emit) async {
+    on<ChangeCategoryTypeEvent>((event, emit) async {
       emit(state.copyWith(
         selectedTypeCategory: event.id,
       ));
@@ -76,6 +83,38 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
         amount: event.amount
       ));
       emit(createBudgetCase.fold(
+        (l) => state.copyWith(
+          message: l.message,
+        ),
+        (r) => state.copyWith(
+          message: 'success',
+        ),
+      ));
+    });
+
+    on<UpdateBudgetEvent>((event, emit) async {
+      final updateBudgetCase = await updateBudget.execute(UpdateBudgetParams(
+        id: event.id,
+        idCategory: event.idCategory,
+        type: event.type,
+        name: event.name,
+        amount: event.amount
+      ));
+      emit(updateBudgetCase.fold(
+        (l) => state.copyWith(
+          message: l.message,
+        ),
+        (r) => state.copyWith(
+          message: 'success',
+        ),
+      ));
+    });
+
+    on<DeleteBudgetEvent>((event, emit) async {
+      final deleteBudgetCase = await deleteBudget.execute(DeleteBudgetParams(
+        id: event.id,
+      ));
+      emit(deleteBudgetCase.fold(
         (l) => state.copyWith(
           message: l.message,
         ),

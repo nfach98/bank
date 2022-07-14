@@ -1,6 +1,10 @@
+import 'package:bank/common/utils/bottom_sheet_helper.dart';
 import 'package:bank/common/utils/currency_formatter.dart';
+import 'package:bank/common/utils/extensions.dart';
 import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
 import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
+import 'package:bank/modules/budget/presentation/budget_form_page.dart';
+import 'package:bank/modules/budget/presentation/widgets/bottom_sheet_budget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -50,7 +54,14 @@ class CardListBudget extends StatelessWidget {
 
                     if (category != null) {
                       return InkWell(
-                        onTap: () { },
+                        onTap: () {
+                          BottomSheetHelper.show(
+                            context: context,
+                            child: BottomSheetBudget(
+                              budget: budget,
+                            ),
+                          );
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12.0).r,
                           child: Row(

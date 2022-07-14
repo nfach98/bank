@@ -4,13 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../common/config/themes.dart';
-import '../../../common/utils/currency_formatter.dart';
 import '../../main/domain/entities/category_entity.dart';
 import '../domain/entities/budget_entity.dart';
 import 'bloc/budget_bloc.dart';
 
 class BudgetFormPage extends StatefulWidget {
-  const BudgetFormPage({Key? key}) : super(key: key);
+  final BudgetEntity? budget;
+
+  const BudgetFormPage({Key? key, this.budget}) : super(key: key);
 
   @override
   State<BudgetFormPage> createState() => _BudgetFormPageState();
@@ -26,6 +27,12 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _budgetBloc = BlocProvider.of<BudgetBloc>(context);
+      if (widget.budget != null) {
+        _budgetBloc.add(ChangeCategoryTypeEvent(widget.budget?.type ?? ''));
+        _budgetBloc.add(ChangeCategoryEvent(widget.budget?.idCategory ?? ''));
+        _nameController.text = widget.budget?.name ?? '';
+        _amountController.text = widget.budget?.amount?.toString() ?? '';
+      }
     });
   }
 
@@ -63,7 +70,7 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
 
           return WillPopScope(
             onWillPop: () async {
-              _budgetBloc.add(const ChangeDropdownCategoryEvent(''));
+              _budgetBloc.add(const ChangeCategoryEvent(''));
               return true;
             },
             child: Scaffold(
@@ -93,7 +100,7 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                                   return Expanded(
                                     child: GestureDetector(
                                       onTap: () {
-                                        _budgetBloc.add(ChangeTypeCategoryEvent(e));
+                                        _budgetBloc.add(ChangeCategoryTypeEvent(e));
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.all(8).r,
@@ -128,7 +135,7 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
 
                                 return GestureDetector(
                                   onTap: () {
-                                    _budgetBloc.add(ChangeDropdownCategoryEvent(
+                                    _budgetBloc.add(ChangeCategoryEvent(
                                         category?.id ?? ''
                                     ));
                                   },
@@ -258,12 +265,23 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                             && _amountController.text.isNotEmpty
                             && (isIncome || isSufficientBudget)
                         ) {
-                          _budgetBloc.add(CreateBudgetEvent(
-                            idCategory: selectedCategory,
-                            type: selectedTypeCategory,
-                            name: _nameController.text,
-                            amount: int.parse(_amountController.text),
-                          ));
+                          if (widget.budget != null) {
+                            _budgetBloc.add(UpdateBudgetEvent(
+                              id: widget.budget?.id ?? '',
+                              idCategory: selectedCategory,
+                              type: selectedTypeCategory,
+                              name: _nameController.text,
+                              amount: int.parse(_amountController.text),
+                            ));
+                            _budgetBloc.add(const GetListBudgetEvent());
+                          } else {
+                            _budgetBloc.add(CreateBudgetEvent(
+                              idCategory: selectedCategory,
+                              type: selectedTypeCategory,
+                              name: _nameController.text,
+                              amount: int.parse(_amountController.text),
+                            ));
+                          }
                         } else if (!isSufficientBudget) {
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text(
@@ -278,7 +296,7 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                         ),
                       ),
                       child: Text(
-                        'Create Budget',
+                        widget.budget == null ? 'Create Budget' : 'Update Budget',
                         style: Theme.of(context).textTheme.headline3?.copyWith(
                           color: BankTheme.colors.white,
                         ),

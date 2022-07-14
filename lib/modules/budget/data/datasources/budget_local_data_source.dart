@@ -1,8 +1,14 @@
+import 'dart:developer';
+
 import 'package:bank/modules/budget/data/models/budget_model.dart';
 import 'package:hive/hive.dart';
 
 abstract class BudgetLocalDataSource {
   Future<int> createBudget({required String idCategory, required String type, required String name, required int amount});
+
+  Future<void> updateBudget({required String id, required String idCategory, required String type, required String name, required int amount});
+
+  Future<void> deleteBudget({required String id});
 
   Future<List<BudgetModel>> getListBudget();
 }
@@ -24,6 +30,7 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
         amount: value['amount'],
       );
     }).toList();
+    log(boxBudget.keys.toString(), name: 'AAA');
 
     return list;
   }
@@ -36,7 +43,30 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
       name: name,
       amount: amount,
     ).toMap);
+    await boxBudget.put(key, BudgetModel(
+      id: key.toString(),
+      idCategory: idCategory,
+      type: type,
+      name: name,
+      amount: amount,
+    ).toMap);
 
     return key;
+  }
+
+  @override
+  Future<void> updateBudget({required String id, required String idCategory, required String type, required String name, required int amount}) async {
+    await boxBudget.put(int.parse(id), BudgetModel(
+      id: id,
+      idCategory: idCategory,
+      type: type,
+      name: name,
+      amount: amount,
+    ).toMap);
+  }
+
+  @override
+  Future<void> deleteBudget({required String id}) async {
+    await boxBudget.delete(int.parse(id));
   }
 }

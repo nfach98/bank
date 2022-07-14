@@ -46,4 +46,30 @@ class BudgetRepositoryImpl implements BudgetRepository {
     }
   }
 
+  @override
+  Future<Either<AppError, void>> updateBudget({required String id, required String idCategory, required String type, required String name, required int amount}) async {
+    try {
+      final result = await _localDataSource.updateBudget(
+        id: id,
+        idCategory: idCategory,
+        type: type,
+        name: name,
+        amount: amount
+      );
+      return Right(result);
+    } on AppError catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<AppError, void>> deleteBudget({required String id}) async {
+    try {
+      final result = await _localDataSource.deleteBudget(id: id);
+      return Right(result);
+    } on AppError catch (e) {
+      return Left(e);
+    }
+  }
+
 }

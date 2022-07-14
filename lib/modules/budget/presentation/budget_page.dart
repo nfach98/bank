@@ -32,7 +32,7 @@ class _BudgetPageState extends State<BudgetPage> {
       _budgetBloc = BlocProvider.of<BudgetBloc>(context);
       _budgetBloc.add(const GetListBudgetEvent());
       _budgetBloc.add(const GetListCategoryEvent());
-      _budgetBloc.add(const ChangeTypeCategoryEvent('1'));
+      _budgetBloc.add(const ChangeCategoryTypeEvent('1'));
     });
   }
 
@@ -49,15 +49,15 @@ class _BudgetPageState extends State<BudgetPage> {
         List<BudgetEntity>? listAllocation = listBudget?.where(
           (e) => e.type == '1' || e.type == '3'
         ).toList();
-        Map? groupedAllocation;
-        if (listAllocation != null) {
-          groupedAllocation = groupBy(listAllocation, (e) => (e as BudgetEntity).idCategory);
-        }
-        print(groupedAllocation?.toString());
 
-        int totalAllocation = listAllocation?.map((e) => e.amount ?? 0).reduce(
-          (value, element) => value + element
-        ) ?? 0;
+        Map? groupedAllocation;
+        int totalAllocation = 0;
+
+        if (listAllocation != null && listAllocation.isNotEmpty) {
+          groupedAllocation = groupBy(listAllocation, (e) => (e as BudgetEntity).idCategory);
+          totalAllocation = listAllocation.map((e) => e.amount ?? 0).reduce(
+          (value, element) => value + element);
+        }
 
         return Scaffold(
           backgroundColor: Colors.transparent,
