@@ -67,7 +67,8 @@ class _BudgetPageState extends State<BudgetPage> {
           listAllocationGrouped.add(BudgetEntity(
             amount: (e as List<BudgetEntity>).map((e) => e.amount)
               .reduce((value, element) => (value ?? 0) + (element ?? 0)),
-            idCategory: e[0].idCategory
+            idCategory: e[0].idCategory,
+            color: (Random().nextDouble() * 0xFFFFFF).toInt()
           ));
         });
         listAllocationGrouped.sort((a, b) =>
@@ -148,24 +149,24 @@ class _BudgetPageState extends State<BudgetPage> {
                                 show: false,
                               ),
                               sectionsSpace: 0,
-                              centerSpaceRadius: 0,
-                              sections: mapGroupedAllocation.entries.map((e) {
-                                int value = (e.value as List<BudgetEntity>)
-                                    .map((e) => e.amount ?? 0)
-                                    .reduce((value, element) => value + element);
+                              centerSpaceRadius: context.screenWidth / 8,
+                              sections: listAllocationGrouped.map((e) {
+                                // int value = (e.value as List<BudgetEntity>)
+                                //     .map((e) => e.amount ?? 0)
+                                //     .reduce((value, element) => value + element);
                                 CategoryEntity? category = listCategory?.where(
-                                        (c) => c.id == e.value[0].idCategory
+                                    (c) => c.id == e?.idCategory
                                 ).toList()[0];
-                                double percentage = value / totalAllocation * 100;
+                                double percentage = (e?.amount ?? 0) / totalAllocation * 100;
 
                                 return PieChartSectionData(
-                                  color: Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
+                                  color: Color(e?.color ?? 0xFFFFF).withOpacity(1.0),
                                   value: percentage,
                                   title: percentage > 15
                                     ? '${category?.name}\n'
                                       '(${percentage.toStringAsFixed(2)}.%)'
                                     : '',
-                                  radius: context.screenWidth / 3,
+                                  radius: context.screenWidth / 5,
                                   titleStyle: TextStyle(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w600,
@@ -210,6 +211,12 @@ class _BudgetPageState extends State<BudgetPage> {
 
                             return Row(
                               children: [
+                                Container(
+                                  width: 12.r,
+                                  height: 12.r,
+                                  margin: const EdgeInsets.only(right: 8).r,
+                                  color: Color(budget?.color ?? 0xFFFFF).withOpacity(1.0),
+                                ),
                                 Expanded(
                                   child: Text(
                                     category?.name ?? ''

@@ -6,8 +6,9 @@ class BudgetEntity extends Equatable{
   final String? type;
   final String? name;
   final int? amount;
+  final int? color;
 
-  const BudgetEntity({this.id, this.idCategory, this.type, this.name, this.amount});
+  const BudgetEntity({this.id, this.idCategory, this.type, this.name, this.amount, this.color});
 
   @override
   List<Object?> get props => [id, idCategory, type, name, amount];
