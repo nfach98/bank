@@ -24,7 +24,6 @@ class BudgetPage extends StatefulWidget {
 
 class _BudgetPageState extends State<BudgetPage> {
   late BudgetBloc _budgetBloc;
-  int touchedIndex = -1;
 
   @override
   void initState() {
