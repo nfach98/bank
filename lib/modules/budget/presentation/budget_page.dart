@@ -63,6 +63,19 @@ class _BudgetPageState extends State<BudgetPage> {
           (value, element) => value + element);
         }
 
+        List<BudgetEntity?> listAllocationGrouped = [];
+        mapGroupedAllocation?.values.toList().forEach((e) {
+          listAllocationGrouped.add(BudgetEntity(
+            amount: (e as List<BudgetEntity>).map((e) => e.amount)
+              .reduce((value, element) => (value ?? 0) + (element ?? 0)),
+            idCategory: e[0].idCategory
+          ));
+        });
+        listAllocationGrouped.sort((a, b) =>
+            ((b?.amount ?? 0) / totalAllocation * 100).compareTo(
+              (a?.amount ?? 0) / totalAllocation * 100)
+        );
+
         int remaining = 0;
         int income = listIncome != null && listIncome.isNotEmpty
           ? listIncome.map((e) => e.amount ?? 0).reduce((p, n) => p + n)
@@ -187,21 +200,20 @@ class _BudgetPageState extends State<BudgetPage> {
                         ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: mapGroupedAllocation.values.length,
+                          itemCount: listAllocationGrouped.length,
                           itemBuilder: (_, index) {
-                            List<BudgetEntity> budgets = mapGroupedAllocation?.values.toList()[index] as List<BudgetEntity>;
-                            int value = budgets.map((e) => e.amount ?? 0)
-                                .reduce((value, element) => value + element);
+                            BudgetEntity? budget = listAllocationGrouped[index];
                             CategoryEntity? category = listCategory?.firstWhere(
-                                    (c) => c.id == budgets[0].idCategory
+                              (c) => c.id == budget?.idCategory
                             );
-                            double percentage = value / totalAllocation * 100;
+                            double percentage =
+                                (budget?.amount ?? 0) / totalAllocation * 100;
 
                             return Row(
                               children: [
                                 Expanded(
                                   child: Text(
-                                      category?.name ?? ''
+                                    category?.name ?? ''
                                   ),
                                 ),
                                 Text(
