@@ -4,6 +4,8 @@ import 'package:bank/modules/budget/domain/repositories/budget_repository.dart';
 import 'package:bank/modules/budget/domain/usecases/create_budget.dart';
 import 'package:bank/modules/budget/domain/usecases/get_list_budget.dart';
 import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
+import 'package:bank/modules/forecast/domain/usecases/delete_forecast.dart';
+import 'package:bank/modules/forecast/domain/usecases/get_list_forecast.dart';
 
 import '../../../injection_container.dart';
 import '../domain/usecases/delete_budget.dart';

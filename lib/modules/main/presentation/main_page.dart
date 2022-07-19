@@ -1,12 +1,12 @@
 import 'package:bank/common/constants/media_query_constants.dart';
 import 'package:bank/modules/budget/presentation/budget_page.dart';
+import 'package:bank/modules/forecast/presentation/forecast_page.dart';
 import 'package:bank/modules/main/presentation/bloc/main_bloc.dart';
 import 'package:bank/modules/dashboard/presentation/dashboard_page.dart';
 import 'package:bank/modules/main/presentation/widgets/menu_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../forecast/presentation/forecast_page.dart';
 import '../../period/presentation/period_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -111,14 +111,17 @@ class _MainPageState extends State<MainPage>
                         children: [
                           LayoutBuilder(
                             builder: (_, constraint) {
-                              if (state.currentIndex == 0) {
-                                return const DashboardPage();
-                              } else if (state.currentIndex == 1) {
-                                return const PeriodPage();
-                              } else if (state.currentIndex == 2) {
-                                return const BudgetPage();
-                              } else {
-                                return const ForecastPage();
+                              switch(state.currentIndex) {
+                                case 0 :
+                                  return const DashboardPage();
+                                case 1 :
+                                  return const PeriodPage();
+                                case 2 :
+                                  return const BudgetPage();
+                                case 3 :
+                                  return const ForecastPage();
+                                default :
+                                  return const DashboardPage();
                               }
                             }
                           ),

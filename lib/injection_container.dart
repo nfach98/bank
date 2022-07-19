@@ -1,5 +1,6 @@
 import 'package:bank/common/utils/dio_config.dart';
 import 'package:bank/modules/budget/di/dependency.dart';
+import 'package:bank/modules/forecast/di/dependency.dart';
 import 'package:bank/modules/main/di/dependency.dart';
 import 'package:bank/modules/period/di/dependency.dart';
 import 'package:get_it/get_it.dart';
@@ -26,4 +27,5 @@ Future configureDependencies() async {
   InjectDependencyMain().inject();
   InjectDependencyPeriod().inject();
   InjectDependencyBudget().inject();
+  InjectDependencyForecast().inject();
 }

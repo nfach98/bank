@@ -1,10 +1,10 @@
 import 'dart:math';
 
+import 'package:bank/common/constants/route_constants.dart';
 import 'package:bank/common/utils/currency_formatter.dart';
 import 'package:bank/common/utils/extensions.dart';
 import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
 import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
-import 'package:bank/modules/budget/presentation/budget_form_page.dart';
 import 'package:bank/modules/budget/presentation/widgets/card_list_budget.dart';
 import 'package:bank/modules/main/domain/entities/category_entity.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -243,10 +243,10 @@ class _BudgetPageState extends State<BudgetPage> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              await Navigator.push(
+              await Navigator.pushNamed(
                 context,
-                MaterialPageRoute(builder: (_) => const BudgetFormPage()
-              ));
+                RouteConstants.budgetForm,
+              );
               _budgetBloc.add(const GetListBudgetEvent());
             },
             backgroundColor: Theme.of(context).primaryColor,

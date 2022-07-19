@@ -1,8 +1,9 @@
+import 'package:bank/modules/actual/domain/usecases/delete_forecast.dart';
+import 'package:bank/modules/actual/domain/usecases/get_list_forecast.dart';
 import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
 import 'package:bank/modules/budget/domain/usecases/create_budget.dart';
-import 'package:bank/modules/budget/domain/usecases/delete_budget.dart';
-import 'package:bank/modules/budget/domain/usecases/get_list_budget.dart';
 import 'package:bank/modules/budget/domain/usecases/update_budget.dart';
+import 'package:bank/modules/forecast/domain/usecases/delete_forecast.dart';
 import 'package:bank/modules/main/domain/entities/category_entity.dart';
 import 'package:bank/modules/main/domain/usecases/get_list_category.dart';
 import 'package:bloc/bloc.dart';
@@ -10,6 +11,8 @@ import 'package:equatable/equatable.dart';
 
 import '../../../period/domain/entities/period_entity.dart';
 import '../../../period/domain/usecases/get_list_period.dart';
+import '../../domain/usecases/delete_budget.dart';
+import '../../domain/usecases/get_list_budget.dart';
 
 part 'budget_event.dart';
 part 'budget_state.dart';
