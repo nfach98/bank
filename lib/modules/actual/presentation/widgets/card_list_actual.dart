@@ -16,15 +16,15 @@ class CardListActual extends StatelessWidget {
   final List<ActualEntity?> listActual;
   final String date;
 
-  const CardListActual({Key? key, required this.listActual, required this.date}) : super(key: key);
+  const CardListActual({Key? key, required this.listActual, required this.date})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ActualBloc, ActualState>(
-      builder: (_, state) {
-        List<CategoryEntity>? listCategory = state.listCategory;
+    return BlocBuilder<ActualBloc, ActualState>(builder: (_, state) {
+      List<CategoryEntity>? listCategory = state.listCategory;
 
-        return Card(
+      return Card(
           margin: EdgeInsets.symmetric(horizontal: 16.w),
           elevation: 2,
           child: Padding(
@@ -33,12 +33,10 @@ class CardListActual extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  DateFormat('dd MMMM yyyy').format(
-                    DateTime.parse(date)
-                  ),
+                  DateFormat('dd MMMM yyyy').format(DateTime.parse(date)),
                   style: Theme.of(context).textTheme.bodyText2?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
                 Container(
                   height: 1.h,
@@ -51,9 +49,8 @@ class CardListActual extends StatelessWidget {
                   itemCount: listActual.length,
                   itemBuilder: (_, index) {
                     ActualEntity? actual = listActual[index];
-                    CategoryEntity? category = listCategory?.firstWhere(
-                      (e) => e.id == actual?.idCategory
-                    );
+                    CategoryEntity? category = listCategory
+                      ?.firstWhere((e) => e.id == actual?.idCategory);
 
                     if (actual != null) {
                       return InkWell(
@@ -69,14 +66,15 @@ class CardListActual extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 12.0).r,
                           child: Row(
                             children: [
-                              if (category != null) CircleAvatar(
-                                backgroundColor: Theme.of(context).primaryColor,
-                                child: FaIcon(
-                                  IconDataSolid(category.idIcon ?? 0),
-                                  size: 16.r,
-                                  color: BankTheme.colors.white,
+                              if (category != null)
+                                CircleAvatar(
+                                  backgroundColor: Theme.of(context).primaryColor,
+                                  child: FaIcon(
+                                    IconDataSolid(category.idIcon ?? 0),
+                                    size: 16.r,
+                                    color: BankTheme.colors.white,
+                                  ),
                                 ),
-                              ),
                               SizedBox(width: 8.w),
                               Expanded(
                                 child: Text(
@@ -85,8 +83,16 @@ class CardListActual extends StatelessWidget {
                               ),
                               SizedBox(width: 8.w),
                               Text(
-                                (actual.amount ?? 0).toSeparatedDecimal(),
-                                style: Theme.of(context).textTheme.bodyText1,
+                                category?.type == '2'
+                                  ? (actual.amount ?? 0).toSeparatedDecimal()
+                                  : '-${(actual.amount ?? 0).toSeparatedDecimal()}',
+                                style: Theme.of(context).textTheme.bodyText1
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: category?.type == '2'
+                                        ? BankTheme.colors.black
+                                        : Colors.red,
+                                  ),
                               ),
                             ],
                           ),
@@ -102,18 +108,20 @@ class CardListActual extends StatelessWidget {
                 ),
               ],
             ),
-          )
-        );
-      }
-    );
+          ));
+    });
   }
 
   String getTitle(String index) {
-    switch(index) {
-      case '1': return 'Expenses';
-      case '2': return 'Incomes';
-      case '3': return 'Savings';
-      default: return '';
+    switch (index) {
+      case '1':
+        return 'Expenses';
+      case '2':
+        return 'Incomes';
+      case '3':
+        return 'Savings';
+      default:
+        return '';
     }
   }
 }

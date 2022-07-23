@@ -26,7 +26,7 @@ class _ActualPageState extends State<ActualPage> {
       _actualBloc = BlocProvider.of<ActualBloc>(context);
       _actualBloc.add(const GetListActualEvent());
       _actualBloc.add(const GetListCategoryEvent());
-      _actualBloc.add(const ChangeCategoryEvent('1'));
+      _actualBloc.add(const ChangeCategoryTypeEvent('1'));
     });
   }
 
@@ -35,8 +35,30 @@ class _ActualPageState extends State<ActualPage> {
     return BlocBuilder<ActualBloc, ActualState>(
       builder: (_, state) {
         List<ActualEntity>? listActual = state.listActual;
-
         Map? mapGroupedAllocation;
+
+        final now = DateTime.now();
+        DateTime? dateStart;
+        DateTime? dateEnd;
+        int date = 28;
+
+        if (now.day < date) {
+          dateEnd = DateTime.now().add(Duration(days: date - now.day));
+          dateEnd = DateTime(dateEnd.year, dateEnd.month, dateEnd.day);
+          dateStart = DateTime(
+            now.month == 1 ? now.year - 1 : now.year,
+            now.month == 1 ? 12 : now.month - 1,
+            date,
+          );
+        } else {
+          dateStart = DateTime.now().subtract(Duration(days: now.day - date));
+          dateStart = DateTime(dateStart.year, dateStart.month, dateStart.day);
+          dateEnd = DateTime(
+            now.month == 12 ? now.year + 1 : now.year,
+            now.month == 12 ? 1 : now.month + 1,
+            date,
+          );
+        }
 
         if (listActual != null && listActual.isNotEmpty) {
           mapGroupedAllocation = groupBy(listActual, (e) => (e as ActualEntity).date);
@@ -49,6 +71,19 @@ class _ActualPageState extends State<ActualPage> {
         listActualGrouped.sort((a, b) =>
           ((b[0]?.date ?? '')).compareTo((a[0]?.date ?? ''))
         );
+
+        final first = listActualGrouped.firstOrNull?[0]?.date;
+        final last = listActualGrouped.lastOrNull?[0]?.date;
+
+        // listActualGrouped = listActualGrouped.where((e) {
+        //   final date = DateTime.parse(e[0]?.date ?? '');
+        //   if (dateStart != null && dateEnd != null) {
+        //     return (dateStart.isBefore(date)
+        //       || dateStart.isAtSameMomentAs(date)
+        //         && dateEnd.isAfter(date));
+        //   }
+        //   return false;
+        // }).toList();
 
         return Scaffold(
           backgroundColor: Colors.transparent,

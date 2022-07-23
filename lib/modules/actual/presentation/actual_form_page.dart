@@ -1,3 +1,4 @@
+import 'package:bank/common/utils/snack_bar_helper.dart';
 import 'package:bank/modules/actual/domain/entities/actual_entity.dart';
 import 'package:bank/modules/actual/presentation/bloc/actual_bloc.dart';
 import 'package:flutter/material.dart';
@@ -351,6 +352,26 @@ class _ActualFormPageState extends State<ActualFormPage> {
                               date: DateFormat('yyyy-MM-dd').format(selectedDate),
                             ));
                           }
+                        } else if (selectedCategory == null) {
+                          SnackBarHelper.show(
+                            context: context,
+                            content: 'Category is required'
+                          );
+                        } else if (selectedDate == null) {
+                          SnackBarHelper.show(
+                              context: context,
+                              content: 'Date is required'
+                          );
+                        } else if (_nameController.text.isEmpty) {
+                          SnackBarHelper.show(
+                            context: context,
+                            content: 'Name is required'
+                          );
+                        } else if (_amountController.text.isEmpty) {
+                          SnackBarHelper.show(
+                            context: context,
+                            content: 'Amount is required'
+                          );
                         }
                       },
                       style: Theme.of(context).textButtonTheme.style?.copyWith(
