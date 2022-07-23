@@ -127,8 +127,8 @@ class _ForecastPageState extends State<ForecastPage> {
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
               await Navigator.pushNamed(
-                  context,
-                  RouteConstants.forecastForm
+                context,
+                RouteConstants.forecastForm
               );
               _forecastBloc.add(const GetListForecastEvent());
             },

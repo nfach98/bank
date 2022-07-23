@@ -80,7 +80,7 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
             child: Scaffold(
               appBar: AppBar(
                 elevation: 0,
-                title: const Text('New Budget'),
+                title: const Text('New Forecast'),
               ),
               body: Column(
                 children: [
@@ -147,8 +147,8 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12).r,
                                       color: category?.id == selectedCategory
-                                          ? Theme.of(context).primaryColor
-                                          : BankTheme.colors.white,
+                                        ? Theme.of(context).primaryColor
+                                        : BankTheme.colors.white,
                                     ),
                                     child: Center(
                                       child: Column(

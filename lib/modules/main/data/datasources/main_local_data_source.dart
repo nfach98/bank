@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:bank/modules/main/data/models/category_model.dart';
 import 'package:bank/modules/period/data/models/period_model.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 
 abstract class MainLocalDataSource {
@@ -15,7 +16,6 @@ class MainLocalDataSourceImpl implements MainLocalDataSource {
   MainLocalDataSourceImpl() {
     boxCategories.clear().then((value) {
       boxCategories.add(CategoryModel(name: 'Food', type: '1', idIcon: 0xf2e7).toMap);
-      boxCategories.add(CategoryModel(name: 'Utility', type: '1', idIcon: 0xf571).toMap);
       boxCategories.add(CategoryModel(name: 'Health', type: '1', idIcon: 0xf469).toMap);
       boxCategories.add(CategoryModel(name: 'Housing', type: '1', idIcon: 0xf015).toMap);
       boxCategories.add(CategoryModel(name: 'Transportation', type: '1', idIcon: 0xf1b9).toMap);
@@ -23,9 +23,10 @@ class MainLocalDataSourceImpl implements MainLocalDataSource {
       boxCategories.add(CategoryModel(name: 'Social', type: '1', idIcon: 0xf0c0).toMap);
       boxCategories.add(CategoryModel(name: 'Education', type: '1', idIcon: 0xf19d).toMap);
       boxCategories.add(CategoryModel(name: 'Shopping', type: '1', idIcon: 0xf290).toMap);
-      boxCategories.add(CategoryModel(name: 'Internet', type: '1', idIcon: 0xf1eb).toMap);
+      boxCategories.add(CategoryModel(name: 'Communication', type: '1', idIcon: 0xf1eb).toMap);
       boxCategories.add(CategoryModel(name: 'Entertainment', type: '1', idIcon: 0xf630).toMap);
       boxCategories.add(CategoryModel(name: 'Personal', type: '1', idIcon: 0xf007).toMap);
+      boxCategories.add(CategoryModel(name: 'Coffee', type: '1', idIcon: 0xf0f4).toMap);
       boxCategories.add(CategoryModel(name: 'Other', type: '1', idIcon: 0xf141).toMap);
 
       boxCategories.add(CategoryModel(name: 'Salary', type: '2', idIcon: 0xf81d).toMap);
