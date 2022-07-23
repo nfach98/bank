@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-class ForecastModel {
+class ActualModel {
   final String? id;
   final String? idCategory;
   final String? type;
@@ -8,10 +8,10 @@ class ForecastModel {
   final int? amount;
   final String? date;
 
-  ForecastModel({this.id, this.idCategory, this.type, this.name, this.amount, this.date});
+  ActualModel({this.id, this.idCategory, this.type, this.name, this.amount, this.date});
 
-  factory ForecastModel.fromJson(Map<String, dynamic> json) =>
-    ForecastModel(
+  factory ActualModel.fromJson(Map<String, dynamic> json) =>
+    ActualModel(
       id: json['id'],
       idCategory: json['id_category'],
       type: json['type'],

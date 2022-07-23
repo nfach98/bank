@@ -6,16 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../common/config/themes.dart';
 import '../../../main/domain/entities/category_entity.dart';
 import 'bottom_sheet_forecast.dart';
 
 class CardListForecast extends StatelessWidget {
-  final List<ForecastEntity> listForecast;
-  final String categoryType;
+  final List<ForecastEntity?> listForecast;
+  final String date;
 
-  const CardListForecast({Key? key, required this.listForecast, required this.categoryType}) : super(key: key);
+  const CardListForecast({Key? key, required this.listForecast, required this.date}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +33,12 @@ class CardListForecast extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  getTitle(categoryType),
-                  style: Theme.of(context).textTheme.headline3,
+                  DateFormat('dd MMMM yyyy').format(
+                    DateTime.parse(date)
+                  ),
+                  style: Theme.of(context).textTheme.bodyText2?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 Container(
                   height: 1.h,
@@ -46,11 +51,11 @@ class CardListForecast extends StatelessWidget {
                   itemCount: listForecast.length,
                   itemBuilder: (_, index) {
                     ForecastEntity? forecast = listForecast[index];
-                    CategoryEntity? category = listCategory?.where(
-                      (e) => e.id == forecast.idCategory
-                    ).toList()[0];
+                    CategoryEntity? category = listCategory?.firstWhere(
+                      (e) => e.id == forecast?.idCategory
+                    );
 
-                    if (category != null) {
+                    if (forecast != null) {
                       return InkWell(
                         onTap: () {
                           BottomSheetHelper.show(
@@ -64,7 +69,7 @@ class CardListForecast extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 12.0).r,
                           child: Row(
                             children: [
-                              CircleAvatar(
+                              if (category != null) CircleAvatar(
                                 backgroundColor: Theme.of(context).primaryColor,
                                 child: FaIcon(
                                   IconDataSolid(category.idIcon ?? 0),
@@ -94,44 +99,6 @@ class CardListForecast extends StatelessWidget {
                   separatorBuilder: (_, index) => Container(
                     height: 1.h,
                   ),
-                ),
-                Container(
-                  height: 1.h,
-                  margin: EdgeInsets.symmetric(vertical: 8.h),
-                  color: BankTheme.colors.grey.withOpacity(0.5),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Monthly ${getTitle(categoryType).toLowerCase()}'
-                      ),
-                    ),
-                    Text(
-                      listForecast.map((e) => e.amount ?? 0).toList()
-                          .reduce((value, element) => value + element).toSeparatedDecimal(),
-                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Annual ${getTitle(categoryType).toLowerCase()}'
-                      ),
-                    ),
-                    Text(
-                      (listForecast.map((e) => e.amount ?? 0).toList()
-                          .reduce((value, element) => value + element) * 12).toSeparatedDecimal(),
-                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),

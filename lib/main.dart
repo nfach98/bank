@@ -16,6 +16,7 @@ void main() async {
   await Hive.openBox('categories');
   await Hive.openBox('budgets');
   await Hive.openBox('forecasts');
+  await Hive.openBox('actuals');
 
   BlocOverrides.runZoned(() => runApp(const App()),
     blocObserver: BlocEventLogger()

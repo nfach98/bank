@@ -1,4 +1,5 @@
 import 'package:bank/common/constants/media_query_constants.dart';
+import 'package:bank/modules/actual/presentation/actual_page.dart';
 import 'package:bank/modules/budget/presentation/budget_page.dart';
 import 'package:bank/modules/forecast/presentation/forecast_page.dart';
 import 'package:bank/modules/main/presentation/bloc/main_bloc.dart';
@@ -120,6 +121,8 @@ class _MainPageState extends State<MainPage>
                                   return const BudgetPage();
                                 case 3 :
                                   return const ForecastPage();
+                                case 4 :
+                                  return const ActualPage();
                                 default :
                                   return const DashboardPage();
                               }

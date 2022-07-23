@@ -1,27 +1,26 @@
 import 'package:bank/common/utils/bottom_sheet_helper.dart';
 import 'package:bank/common/utils/currency_formatter.dart';
-import 'package:bank/common/utils/extensions.dart';
-import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
-import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
-import 'package:bank/modules/budget/presentation/budget_form_page.dart';
-import 'package:bank/modules/budget/presentation/widgets/bottom_sheet_budget.dart';
+import 'package:bank/modules/actual/domain/entities/actual_entity.dart';
+import 'package:bank/modules/actual/presentation/bloc/actual_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../common/config/themes.dart';
 import '../../../main/domain/entities/category_entity.dart';
+import 'bottom_sheet_actual.dart';
 
-class CardListBudget extends StatelessWidget {
-  final List<BudgetEntity> listBudget;
-  final String categoryType;
+class CardListActual extends StatelessWidget {
+  final List<ActualEntity?> listActual;
+  final String date;
 
-  const CardListBudget({Key? key, required this.listBudget, required this.categoryType}) : super(key: key);
+  const CardListActual({Key? key, required this.listActual, required this.date}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BudgetBloc, BudgetState>(
+    return BlocBuilder<ActualBloc, ActualState>(
       builder: (_, state) {
         List<CategoryEntity>? listCategory = state.listCategory;
 
@@ -34,8 +33,12 @@ class CardListBudget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  getTitle(categoryType),
-                  style: Theme.of(context).textTheme.headline3,
+                  DateFormat('dd MMMM yyyy').format(
+                    DateTime.parse(date)
+                  ),
+                  style: Theme.of(context).textTheme.bodyText2?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 Container(
                   height: 1.h,
@@ -45,20 +48,20 @@ class CardListBudget extends StatelessWidget {
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: listBudget.length,
+                  itemCount: listActual.length,
                   itemBuilder: (_, index) {
-                    BudgetEntity? budget = listBudget[index];
-                    CategoryEntity? category = listCategory?.where(
-                      (e) => e.id == budget.idCategory
-                    ).toList()[0];
+                    ActualEntity? actual = listActual[index];
+                    CategoryEntity? category = listCategory?.firstWhere(
+                      (e) => e.id == actual?.idCategory
+                    );
 
-                    if (category != null) {
+                    if (actual != null) {
                       return InkWell(
                         onTap: () {
                           BottomSheetHelper.show(
                             context: context,
-                            child: BottomSheetBudget(
-                              budget: budget,
+                            child: BottomSheetActual(
+                              actual: actual,
                             ),
                           );
                         },
@@ -66,7 +69,7 @@ class CardListBudget extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 12.0).r,
                           child: Row(
                             children: [
-                              CircleAvatar(
+                              if (category != null) CircleAvatar(
                                 backgroundColor: Theme.of(context).primaryColor,
                                 child: FaIcon(
                                   IconDataSolid(category.idIcon ?? 0),
@@ -77,12 +80,12 @@ class CardListBudget extends StatelessWidget {
                               SizedBox(width: 8.w),
                               Expanded(
                                 child: Text(
-                                  budget.name ?? '',
+                                  actual.name ?? '',
                                 ),
                               ),
                               SizedBox(width: 8.w),
                               Text(
-                                (budget.amount ?? 0).toSeparatedDecimal(),
+                                (actual.amount ?? 0).toSeparatedDecimal(),
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                             ],
@@ -96,44 +99,6 @@ class CardListBudget extends StatelessWidget {
                   separatorBuilder: (_, index) => Container(
                     height: 1.h,
                   ),
-                ),
-                Container(
-                  height: 1.h,
-                  margin: EdgeInsets.symmetric(vertical: 8.h),
-                  color: BankTheme.colors.grey.withOpacity(0.5),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Monthly ${getTitle(categoryType).toLowerCase()}'
-                      ),
-                    ),
-                    Text(
-                      listBudget.map((e) => e.amount ?? 0).toList()
-                          .reduce((value, element) => value + element).toSeparatedDecimal(),
-                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Annual ${getTitle(categoryType).toLowerCase()}'
-                      ),
-                    ),
-                    Text(
-                      (listBudget.map((e) => e.amount ?? 0).toList()
-                          .reduce((value, element) => value + element) * 12).toSeparatedDecimal(),
-                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),

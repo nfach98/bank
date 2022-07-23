@@ -1,41 +1,39 @@
-import 'package:bank/modules/budget/domain/usecases/get_list_budget.dart';
-import 'package:bank/modules/forecast/data/datasources/forecast_local_data_source.dart';
-import 'package:bank/modules/forecast/data/repositories/forecast_repository_impl.dart';
-import 'package:bank/modules/forecast/domain/repositories/forecast_repository.dart';
-import 'package:bank/modules/forecast/domain/usecases/create_forecast.dart';
-import 'package:bank/modules/forecast/domain/usecases/update_forecast.dart';
-import 'package:bank/modules/forecast/presentation/bloc/forecast_bloc.dart';
+import 'package:bank/modules/actual/data/datasources/actual_local_data_source.dart';
+import 'package:bank/modules/actual/data/repositories/actual_repository_impl.dart';
+import 'package:bank/modules/actual/domain/repositories/actual_repository.dart';
+import 'package:bank/modules/actual/domain/usecases/create_actual.dart';
+import 'package:bank/modules/actual/domain/usecases/delete_actual.dart';
+import 'package:bank/modules/actual/domain/usecases/get_list_actual.dart';
+import 'package:bank/modules/actual/domain/usecases/update_actual.dart';
+import 'package:bank/modules/actual/presentation/bloc/actual_bloc.dart';
 
 import '../../../injection_container.dart';
-import '../../budget/domain/usecases/delete_budget.dart';
-import '../../forecast/domain/usecases/delete_forecast.dart';
-import '../../forecast/domain/usecases/get_list_forecast.dart';
 
-class InjectDependencyForecast extends IconfigureDependencies {
-  InjectDependencyForecast();
+class InjectDependencyActual extends IconfigureDependencies {
+  InjectDependencyActual();
 
   @override
   injectBloc() {
-    // sl.registerFactory(() => ForecastBloc());
+    sl.registerFactory(() => ActualBloc(sl(), sl(), sl(), sl(), sl()));
   }
 
   @override
   injectDataSource() {
-    sl.registerLazySingleton<ForecastLocalDataSource>(
-      () => ForecastLocalDataSourceImpl());
+    sl.registerLazySingleton<ActualLocalDataSource>(
+      () => ActualLocalDataSourceImpl());
   }
 
   @override
   injectRepository() {
-    sl.registerLazySingleton<ForecastRepository>(() => ForecastRepositoryImpl(sl()));
+    sl.registerLazySingleton<ActualRepository>(() => ActualRepositoryImpl(sl()));
   }
 
   @override
   injectUseCase() {
-    sl.registerLazySingleton(() => CreateForecast(sl()));
-    sl.registerLazySingleton(() => UpdateForecast(sl()));
-    sl.registerLazySingleton(() => DeleteForecast(sl()));
-    sl.registerLazySingleton(() => GetListForecast(sl()));
+    sl.registerLazySingleton(() => CreateActual(sl()));
+    sl.registerLazySingleton(() => UpdateActual(sl()));
+    sl.registerLazySingleton(() => DeleteActual(sl()));
+    sl.registerLazySingleton(() => GetListActual(sl()));
   }
 
   @override

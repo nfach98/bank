@@ -1,20 +1,21 @@
 import 'package:bank/common/errors/app_error.dart';
+import 'package:bank/modules/actual/domain/entities/actual_entity.dart';
 import 'package:bank/modules/forecast/domain/entities/forecast_entity.dart';
 import 'package:dartz/dartz.dart';
 
-import '../../domain/repositories/forecast_repository.dart';
-import '../datasources/forecast_local_data_source.dart';
+import '../../domain/repositories/actual_repository.dart';
+import '../datasources/actual_local_data_source.dart';
 
-class ForecastRepositoryImpl implements ForecastRepository {
-  final ForecastLocalDataSource _localDataSource;
+class ActualRepositoryImpl implements ActualRepository {
+  final ActualLocalDataSource _localDataSource;
 
-  ForecastRepositoryImpl(this._localDataSource);
+  ActualRepositoryImpl(this._localDataSource);
 
   @override
-  Future<Either<AppError, List<ForecastEntity>>> getListForecast() async {
+  Future<Either<AppError, List<ActualEntity>>> getListActual() async {
     try {
-      final result = await _localDataSource.getListForecast();
-      return Right(result.map((e) => ForecastEntity(
+      final result = await _localDataSource.getListActual();
+      return Right(result.map((e) => ActualEntity(
         id: e.id,
         idCategory: e.idCategory,
         type: e.type,
@@ -28,7 +29,7 @@ class ForecastRepositoryImpl implements ForecastRepository {
   }
 
   @override
-  Future<Either<AppError, int>> createForecast({
+  Future<Either<AppError, int>> createActual({
     required String idCategory,
     required String type,
     required String name,
@@ -36,7 +37,7 @@ class ForecastRepositoryImpl implements ForecastRepository {
     required String date,
   }) async {
     try {
-      final result = await _localDataSource.createForecast(
+      final result = await _localDataSource.createActual(
         idCategory: idCategory,
         type: type,
         name: name,
@@ -50,9 +51,9 @@ class ForecastRepositoryImpl implements ForecastRepository {
   }
 
   @override
-  Future<Either<AppError, void>> updateForecast({required String id, required String idCategory, required String type, required String name, required int amount, required String date}) async {
+  Future<Either<AppError, void>> updateActual({required String id, required String idCategory, required String type, required String name, required int amount, required String date}) async {
     try {
-      final result = await _localDataSource.updateForecast(
+      final result = await _localDataSource.updateActual(
         id: id,
         idCategory: idCategory,
         type: type,
@@ -67,9 +68,9 @@ class ForecastRepositoryImpl implements ForecastRepository {
   }
 
   @override
-  Future<Either<AppError, void>> deleteForecast({required String id}) async {
+  Future<Either<AppError, void>> deleteActual({required String id}) async {
     try {
-      final result = await _localDataSource.deleteForecast(id: id);
+      final result = await _localDataSource.deleteActual(id: id);
       return Right(result);
     } on AppError catch (e) {
       return Left(e);

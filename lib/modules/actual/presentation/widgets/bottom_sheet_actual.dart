@@ -1,20 +1,20 @@
-import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
+import 'package:bank/modules/actual/domain/entities/actual_entity.dart';
+import 'package:bank/modules/actual/presentation/actual_form_page.dart';
+import 'package:bank/modules/actual/presentation/bloc/actual_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../budget/presentation/bloc/budget_bloc.dart';
-import '../../../budget/presentation/budget_form_page.dart';
 
-class BottomSheetBudget extends StatelessWidget {
-  final BudgetEntity budget;
+class BottomSheetActual extends StatelessWidget {
+  final ActualEntity actual;
 
-  const BottomSheetBudget({Key? key, required this.budget}) : super(key: key);
+  const BottomSheetActual({Key? key, required this.actual}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final BudgetBloc _budgetBloc = BlocProvider.of<BudgetBloc>(context);
+    final ActualBloc _actualBloc = BlocProvider.of<ActualBloc>(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,8 +23,8 @@ class BottomSheetBudget extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => BudgetFormPage(
-                budget: budget,
+              MaterialPageRoute(builder: (_) => ActualFormPage(
+                actual: actual,
               ))
             );
           },
@@ -54,8 +54,8 @@ class BottomSheetBudget extends StatelessWidget {
         ),
         InkWell(
           onTap: () {
-            _budgetBloc.add(DeleteBudgetEvent(id: budget.id ?? ''));
-            _budgetBloc.add(const GetListBudgetEvent());
+            _actualBloc.add(DeleteActualEvent(id: actual.id ?? ''));
+            _actualBloc.add(const GetListActualEvent());
             Navigator.pop(context);
           },
           child: Container(

@@ -1,5 +1,6 @@
 import 'package:bank/common/config/themes.dart';
 import 'package:bank/common/constants/route_constants.dart';
+import 'package:bank/modules/actual/presentation/bloc/actual_bloc.dart';
 import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
 import 'package:bank/modules/forecast/presentation/bloc/forecast_bloc.dart';
 import 'package:bank/modules/main/presentation/bloc/main_bloc.dart';
@@ -22,6 +23,7 @@ class App extends StatelessWidget {
         BlocProvider<PeriodBloc>(create: (_) => sl<PeriodBloc>()),
         BlocProvider<BudgetBloc>(create: (_) => sl<BudgetBloc>()),
         BlocProvider<ForecastBloc>(create: (_) => sl<ForecastBloc>()),
+        BlocProvider<ActualBloc>(create: (_) => sl<ActualBloc>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 720),

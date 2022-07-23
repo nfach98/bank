@@ -1,4 +1,6 @@
 import 'package:bank/common/constants/route_constants.dart';
+import 'package:bank/modules/actual/presentation/actual_form_page.dart';
+import 'package:bank/modules/actual/presentation/actual_page.dart';
 import 'package:bank/modules/budget/presentation/budget_form_page.dart';
 import 'package:bank/modules/budget/presentation/budget_page.dart';
 import 'package:bank/modules/forecast/presentation/forecast_form_page.dart';
@@ -24,6 +26,12 @@ class AppRouter {
       case RouteConstants.forecastForm:
         return MaterialPageRoute(
             builder: (_) => const ForecastFormPage());
+      case RouteConstants.actual:
+        return MaterialPageRoute(
+            builder: (_) => const ActualPage());
+      case RouteConstants.actualForm:
+        return MaterialPageRoute(
+            builder: (_) => const ActualFormPage());
       default:
         return null;
     }

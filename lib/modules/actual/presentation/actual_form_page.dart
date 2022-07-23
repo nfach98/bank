@@ -1,5 +1,5 @@
-import 'package:bank/modules/forecast/domain/entities/forecast_entity.dart';
-import 'package:bank/modules/forecast/presentation/bloc/forecast_bloc.dart';
+import 'package:bank/modules/actual/domain/entities/actual_entity.dart';
+import 'package:bank/modules/actual/presentation/bloc/actual_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,17 +9,17 @@ import 'package:intl/intl.dart';
 import '../../../common/config/themes.dart';
 import '../../main/domain/entities/category_entity.dart';
 
-class ForecastFormPage extends StatefulWidget {
-  final ForecastEntity? forecast;
+class ActualFormPage extends StatefulWidget {
+  final ActualEntity? actual;
 
-  const ForecastFormPage({Key? key, this.forecast}) : super(key: key);
+  const ActualFormPage({Key? key, this.actual}) : super(key: key);
 
   @override
-  State<ForecastFormPage> createState() => _ForecastFormPageState();
+  State<ActualFormPage> createState() => _ActualFormPageState();
 }
 
-class _ForecastFormPageState extends State<ForecastFormPage> {
-  late ForecastBloc _forecastBloc;
+class _ActualFormPageState extends State<ActualFormPage> {
+  late ActualBloc _actualBloc;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
 
@@ -27,24 +27,24 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      _forecastBloc = BlocProvider.of<ForecastBloc>(context);
-      if (widget.forecast != null) {
-        _forecastBloc.add(ChangeCategoryTypeEvent(widget.forecast?.type ?? ''));
-        _forecastBloc.add(ChangeCategoryEvent(widget.forecast?.idCategory ?? ''));
-        _forecastBloc.add(ChangeDateEvent(DateTime.now()));
-        _nameController.text = widget.forecast?.name ?? '';
-        _amountController.text = widget.forecast?.amount?.toString() ?? '';
+      _actualBloc = BlocProvider.of<ActualBloc>(context);
+      if (widget.actual != null) {
+        _actualBloc.add(ChangeCategoryTypeEvent(widget.actual?.type ?? ''));
+        _actualBloc.add(ChangeCategoryEvent(widget.actual?.idCategory ?? ''));
+        _actualBloc.add(ChangeDateEvent(DateTime.now()));
+        _nameController.text = widget.actual?.name ?? '';
+        _amountController.text = widget.actual?.amount?.toString() ?? '';
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ForecastBloc, ForecastState>(
+    return BlocListener<ActualBloc, ActualState>(
       listener: (_, state) {
         if (state.message == 'success') Navigator.pop(context);
       },
-      child: BlocBuilder<ForecastBloc, ForecastState>(
+      child: BlocBuilder<ActualBloc, ActualState>(
         builder: (_, state) {
           String? selectedCategory = state.selectedCategory;
           String? selectedTypeCategory = state.selectedTypeCategory;
@@ -54,11 +54,11 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
             (e) => e.type == selectedTypeCategory).toList();
           List<String>? listTypeCategory = state.listTypeCategory;
 
-          List<ForecastEntity>? listBudget = state.listForecast;
-          List<ForecastEntity> listIncome = listBudget?.where(
+          List<ActualEntity>? listActual = state.listActual;
+          List<ActualEntity> listIncome = listActual?.where(
             (e) => e.type == '2'
           ).toList() ?? [];
-          List<ForecastEntity> listOutcome = listBudget?.where(
+          List<ActualEntity> listOutcome = listActual?.where(
             (e) => e.type == '1' || e.type == '3'
           ).toList() ?? [];
 
@@ -73,14 +73,18 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
 
           return WillPopScope(
             onWillPop: () async {
-              _forecastBloc.add(const ChangeCategoryEvent(''));
-              _forecastBloc.add(ChangeDateEvent(DateTime.now()));
+              _actualBloc.add(const ChangeCategoryEvent(''));
+              _actualBloc.add(ChangeDateEvent(DateTime.now()));
               return true;
             },
             child: Scaffold(
               appBar: AppBar(
                 elevation: 0,
-                title: const Text('New Forecast'),
+                title: Text(
+                  widget.actual == null
+                    ? 'New Actual'
+                    : 'Edit Actual'
+                ),
               ),
               body: Column(
                 children: [
@@ -104,7 +108,7 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                                   return Expanded(
                                     child: GestureDetector(
                                       onTap: () {
-                                        _forecastBloc.add(ChangeCategoryTypeEvent(e));
+                                        _actualBloc.add(ChangeCategoryTypeEvent(e));
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.all(8).r,
@@ -139,7 +143,7 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
 
                                 return GestureDetector(
                                   onTap: () {
-                                    _forecastBloc.add(ChangeCategoryEvent(
+                                    _actualBloc.add(ChangeCategoryEvent(
                                         category?.id ?? ''
                                     ));
                                   },
@@ -214,7 +218,7 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                                   )
                                 );
                                 if (date != null && date != selectedDate) {
-                                  _forecastBloc.add(ChangeDateEvent(date));
+                                  _actualBloc.add(ChangeDateEvent(date));
                                 }
                               },
                               child: Padding(
@@ -328,18 +332,18 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                             && _nameController.text.isNotEmpty
                             && _amountController.text.isNotEmpty
                         ) {
-                          if (widget.forecast != null) {
-                            _forecastBloc.add(UpdateForecastEvent(
-                              id: widget.forecast?.id ?? '',
+                          if (widget.actual != null) {
+                            _actualBloc.add(UpdateActualEvent(
+                              id: widget.actual?.id ?? '',
                               idCategory: selectedCategory,
                               type: selectedTypeCategory,
                               name: _nameController.text,
                               amount: int.parse(_amountController.text),
                               date: DateFormat('yyyy-MM-dd').format(selectedDate),
                             ));
-                            _forecastBloc.add(const GetListForecastEvent());
+                            _actualBloc.add(const GetListActualEvent());
                           } else {
-                            _forecastBloc.add(CreateForecastEvent(
+                            _actualBloc.add(CreateActualEvent(
                               idCategory: selectedCategory,
                               type: selectedTypeCategory,
                               name: _nameController.text,
@@ -355,9 +359,9 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                         ),
                       ),
                       child: Text(
-                        widget.forecast == null
-                            ? 'Create Forecast'
-                            : 'Update Forecast',
+                        widget.actual == null
+                            ? 'Create Actual'
+                            : 'Update Actual',
                         style: Theme.of(context).textTheme.headline3?.copyWith(
                           color: BankTheme.colors.white,
                         ),

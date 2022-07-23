@@ -1,60 +1,52 @@
-import 'dart:math';
-
 import 'package:bank/common/constants/route_constants.dart';
-import 'package:bank/modules/forecast/domain/entities/forecast_entity.dart';
-import 'package:bank/modules/forecast/presentation/bloc/forecast_bloc.dart';
-import 'package:bank/modules/forecast/presentation/widgets/card_list_forecast.dart';
+import 'package:bank/modules/actual/domain/entities/actual_entity.dart';
+import 'package:bank/modules/actual/presentation/bloc/actual_bloc.dart';
+import 'package:bank/modules/actual/presentation/widgets/card_list_actual.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import "package:collection/collection.dart";
 
 import '../../../common/config/themes.dart';
-import '../../main/domain/entities/category_entity.dart';
 
-class ForecastPage extends StatefulWidget {
-  const ForecastPage({Key? key}) : super(key: key);
+class ActualPage extends StatefulWidget {
+  const ActualPage({Key? key}) : super(key: key);
 
   @override
-  State<ForecastPage> createState() => _ForecastPageState();
+  State<ActualPage> createState() => _ActualPageState();
 }
 
-class _ForecastPageState extends State<ForecastPage> {
-  late ForecastBloc _forecastBloc;
+class _ActualPageState extends State<ActualPage> {
+  late ActualBloc _actualBloc;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      _forecastBloc = BlocProvider.of<ForecastBloc>(context);
-      _forecastBloc.add(const GetListForecastEvent());
-      _forecastBloc.add(const GetListCategoryEvent());
-      _forecastBloc.add(const ChangeCategoryTypeEvent('1'));
+      _actualBloc = BlocProvider.of<ActualBloc>(context);
+      _actualBloc.add(const GetListActualEvent());
+      _actualBloc.add(const GetListCategoryEvent());
+      _actualBloc.add(const ChangeCategoryEvent('1'));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ForecastBloc, ForecastState>(
+    return BlocBuilder<ActualBloc, ActualState>(
       builder: (_, state) {
-        List<CategoryEntity>? listCategory = state.listCategory;
-        List<String>? listCategoryTypes = listCategory?.map(
-          (e) => e.type ?? ''
-        ).toSet().toList();
-
-        List<ForecastEntity>? listForecast = state.listForecast;
+        List<ActualEntity>? listActual = state.listActual;
 
         Map? mapGroupedAllocation;
 
-        if (listForecast != null && listForecast.isNotEmpty) {
-          mapGroupedAllocation = groupBy(listForecast, (e) => (e as ForecastEntity).date);
+        if (listActual != null && listActual.isNotEmpty) {
+          mapGroupedAllocation = groupBy(listActual, (e) => (e as ActualEntity).date);
         }
 
-        List<List<ForecastEntity?>> listForecastGrouped = [];
+        List<List<ActualEntity?>> listActualGrouped = [];
         mapGroupedAllocation?.values.toList().forEach((e) {
-          listForecastGrouped.add(e);
+          listActualGrouped.add(e);
         });
-        listForecastGrouped.sort((a, b) =>
+        listActualGrouped.sort((a, b) =>
           ((b[0]?.date ?? '')).compareTo((a[0]?.date ?? ''))
         );
 
@@ -66,7 +58,7 @@ class _ForecastPageState extends State<ForecastPage> {
             backgroundColor: Colors.transparent,
             foregroundColor: BankTheme.colors.green,
             title: Text(
-              'Forecast',
+              'Actual',
               style: TextStyle(
                 fontWeight: FontWeight.normal,
                 color: Theme.of(context).primaryColor,
@@ -80,13 +72,13 @@ class _ForecastPageState extends State<ForecastPage> {
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: listForecastGrouped.length,
+                  itemCount: listActualGrouped.length,
                   itemBuilder: (_, index) {
-                    List<ForecastEntity?> list = listForecastGrouped[index];
+                    List<ActualEntity?> list = listActualGrouped[index];
 
                     if (list.isNotEmpty) {
-                      return CardListForecast(
-                        listForecast: list,
+                      return CardListActual(
+                        listActual: list,
                         date: list[0]?.date ?? '',
                       );
                     }
@@ -103,9 +95,9 @@ class _ForecastPageState extends State<ForecastPage> {
             onPressed: () async {
               await Navigator.pushNamed(
                 context,
-                RouteConstants.forecastForm
+                RouteConstants.actualForm
               );
-              _forecastBloc.add(const GetListForecastEvent());
+              _actualBloc.add(const GetListActualEvent());
             },
             backgroundColor: Theme.of(context).primaryColor,
             child: Icon(
