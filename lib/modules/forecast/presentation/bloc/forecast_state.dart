@@ -56,5 +56,6 @@ class ForecastState extends Equatable {
     listPeriod,
     listCategory,
     listForecast,
+    date,
   ];
 }

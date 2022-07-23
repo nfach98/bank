@@ -44,10 +44,10 @@ class _ForecastPageState extends State<ForecastPage> {
 
         List<ForecastEntity>? listForecast = state.listForecast;
         List<ForecastEntity>? listAllocation = listForecast?.where(
-                (e) => e.type == '1' || e.type == '3'
+          (e) => e.type == '1' || e.type == '3'
         ).toList();
         List<ForecastEntity>? listIncome = listForecast?.where(
-                (e) => e.type == '2'
+          (e) => e.type == '2'
         ).toList();
 
         Map? mapGroupedAllocation;

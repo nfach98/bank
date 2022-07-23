@@ -54,6 +54,7 @@ class ForecastBloc extends Bloc<ForecastEvent, ForecastState> {
     });
 
     on<ChangeDateEvent>((event, emit) async {
+      print(event.date.toString());
       emit(state.copyWith(
         date: event.date,
       ));

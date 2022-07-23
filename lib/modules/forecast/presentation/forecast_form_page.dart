@@ -48,7 +48,7 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
         builder: (_, state) {
           String? selectedCategory = state.selectedCategory;
           String? selectedTypeCategory = state.selectedTypeCategory;
-          DateTime? date = state.date;
+          DateTime? selectedDate = state.date;
 
           List<CategoryEntity>? listCategory = state.listCategory?.where(
             (e) => e.type == selectedTypeCategory).toList();
@@ -194,25 +194,24 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                             widthFactor: 1.0,
                             child: InkWell(
                               onTap: () async {
-                                final selectedDate = await showDatePicker(
+                                final date = await showDatePicker(
                                   context: context,
-                                  initialDate: date ?? DateTime.now(),
+                                  initialDate: selectedDate ?? DateTime.now(),
                                   firstDate: DateTime(1900),
                                   lastDate: DateTime(2100),
                                 );
-                                if (selectedDate != null
-                                    && selectedDate != date) {
-                                  _forecastBloc.add(ChangeDateEvent(
-                                    selectedDate
-                                  ));
+                                if (date != null && date != selectedDate) {
+                                  _forecastBloc.add(ChangeDateEvent(date));
                                 }
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(12).r,
                                 child: Text(
-                                  DateFormat.yMMMMd().format(
-                                    date ?? DateTime.now()
-                                  ),
+                                  selectedDate != null
+                                    ? DateFormat('dd MMMM yyyy').format(
+                                      selectedDate
+                                    )
+                                    : 'Select date',
                                   style: Theme.of(context).textTheme.bodyText1,
                                 ),
                               ),
@@ -280,9 +279,9 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                     child: TextButton(
                       onPressed: () {
                         CategoryEntity? category;
-                        bool isIncome = selectedTypeCategory == '2';
-                        bool isSufficientBudget = (selectedTypeCategory == '1' || selectedTypeCategory == '3')
-                            && remaining - int.parse(_amountController.text) >= 0;
+                        // bool isIncome = selectedTypeCategory == '2';
+                        // bool isSufficientBudget = (selectedTypeCategory == '1' || selectedTypeCategory == '3')
+                        //     && remaining - int.parse(_amountController.text) >= 0;
 
                         var cat = listCategory?.where(
                           (e) => e.id == selectedCategory
@@ -293,10 +292,10 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
 
                         if (selectedCategory != null
                             && selectedTypeCategory != null
+                            && selectedDate != null
                             && category?.type == selectedTypeCategory
                             && _nameController.text.isNotEmpty
                             && _amountController.text.isNotEmpty
-                            // && (isIncome || isSufficientBudget)
                         ) {
                           if (widget.forecast != null) {
                             _forecastBloc.add(UpdateForecastEvent(
@@ -305,7 +304,7 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                               type: selectedTypeCategory,
                               name: _nameController.text,
                               amount: int.parse(_amountController.text),
-                              date: '',
+                              date: DateFormat('yyyy-MM-dd').format(selectedDate),
                             ));
                             _forecastBloc.add(const GetListForecastEvent());
                           } else {
@@ -314,7 +313,7 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                               type: selectedTypeCategory,
                               name: _nameController.text,
                               amount: int.parse(_amountController.text),
-                              date: '',
+                              date: DateFormat('yyyy-MM-dd').format(selectedDate),
                             ));
                           }
                         }

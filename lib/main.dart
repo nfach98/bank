@@ -18,5 +18,6 @@ void main() async {
   await Hive.openBox('forecasts');
 
   BlocOverrides.runZoned(() => runApp(const App()),
-      blocObserver: BlocEventLogger());
+    blocObserver: BlocEventLogger()
+  );
 }
