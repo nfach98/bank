@@ -22,6 +22,15 @@ class ChangeCategoryTypeEvent extends ForecastEvent {
   List<Object?> get props => [id];
 }
 
+class ChangeDateEvent extends ForecastEvent {
+  final DateTime date;
+
+  const ChangeDateEvent(this.date);
+
+  @override
+  List<Object?> get props => [date];
+}
+
 class CreateForecastEvent extends ForecastEvent {
   final String idCategory;
   final String type;

@@ -9,6 +9,7 @@ class ForecastState extends Equatable {
   final List<CategoryEntity>? listCategory;
   final List<String>? listTypeCategory;
   final List<ForecastEntity>? listForecast;
+  final DateTime? date;
 
   const ForecastState({
     this.message,
@@ -19,6 +20,7 @@ class ForecastState extends Equatable {
     this.listCategory,
     this.listTypeCategory,
     this.listForecast,
+    this.date,
   });
 
   ForecastState copyWith({
@@ -30,6 +32,7 @@ class ForecastState extends Equatable {
     List<CategoryEntity>? listCategory,
     List<String>? listTypeCategory,
     List<ForecastEntity>? listForecast,
+    DateTime? date,
   }) {
     return ForecastState(
       message: message,
@@ -40,6 +43,7 @@ class ForecastState extends Equatable {
       listCategory: listCategory ?? this.listCategory,
       listTypeCategory: listTypeCategory ?? this.listTypeCategory,
       listForecast: listForecast ?? this.listForecast,
+      date: date ?? this.date,
     );
   }
 

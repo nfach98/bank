@@ -1,20 +1,20 @@
-import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
+import 'package:bank/modules/forecast/domain/entities/forecast_entity.dart';
+import 'package:bank/modules/forecast/presentation/bloc/forecast_bloc.dart';
+import 'package:bank/modules/forecast/presentation/forecast_form_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../budget/presentation/bloc/budget_bloc.dart';
-import '../../../budget/presentation/budget_form_page.dart';
 
-class BottomSheetBudget extends StatelessWidget {
-  final BudgetEntity budget;
+class BottomSheetForecast extends StatelessWidget {
+  final ForecastEntity forecast;
 
-  const BottomSheetBudget({Key? key, required this.budget}) : super(key: key);
+  const BottomSheetForecast({Key? key, required this.forecast}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final BudgetBloc _budgetBloc = BlocProvider.of<BudgetBloc>(context);
+    final ForecastBloc _forecastBloc = BlocProvider.of<ForecastBloc>(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,8 +23,8 @@ class BottomSheetBudget extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => BudgetFormPage(
-                budget: budget,
+              MaterialPageRoute(builder: (_) => ForecastFormPage(
+                forecast: forecast,
               ))
             );
           },
@@ -54,8 +54,8 @@ class BottomSheetBudget extends StatelessWidget {
         ),
         InkWell(
           onTap: () {
-            _budgetBloc.add(DeleteBudgetEvent(id: budget.id ?? ''));
-            _budgetBloc.add(const GetListBudgetEvent());
+            _forecastBloc.add(DeleteForecastEvent(id: forecast.id ?? ''));
+            _forecastBloc.add(const GetListForecastEvent());
             Navigator.pop(context);
           },
           child: Container(

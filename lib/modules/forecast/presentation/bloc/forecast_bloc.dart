@@ -53,6 +53,12 @@ class ForecastBloc extends Bloc<ForecastEvent, ForecastState> {
       ));
     });
 
+    on<ChangeDateEvent>((event, emit) async {
+      emit(state.copyWith(
+        date: event.date,
+      ));
+    });
+
     on<CreateForecastEvent>((event, emit) async {
       final createBudgetCase = await createForecast.execute(CreateForecastParams(
         idCategory: event.idCategory,

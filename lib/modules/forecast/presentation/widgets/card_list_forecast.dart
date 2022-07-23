@@ -1,10 +1,7 @@
 import 'package:bank/common/utils/bottom_sheet_helper.dart';
 import 'package:bank/common/utils/currency_formatter.dart';
-import 'package:bank/common/utils/extensions.dart';
-import 'package:bank/modules/budget/domain/entities/budget_entity.dart';
 import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
-import 'package:bank/modules/budget/presentation/budget_form_page.dart';
-import 'package:bank/modules/budget/presentation/widgets/bottom_sheet_budget.dart';
+import 'package:bank/modules/forecast/domain/entities/forecast_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,12 +9,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../common/config/themes.dart';
 import '../../../main/domain/entities/category_entity.dart';
+import 'bottom_sheet_forecast.dart';
 
-class CardListBudget extends StatelessWidget {
-  final List<BudgetEntity> listBudget;
+class CardListForecast extends StatelessWidget {
+  final List<ForecastEntity> listForecast;
   final String categoryType;
 
-  const CardListBudget({Key? key, required this.listBudget, required this.categoryType}) : super(key: key);
+  const CardListForecast({Key? key, required this.listForecast, required this.categoryType}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +43,11 @@ class CardListBudget extends StatelessWidget {
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: listBudget.length,
+                  itemCount: listForecast.length,
                   itemBuilder: (_, index) {
-                    BudgetEntity? budget = listBudget[index];
+                    ForecastEntity? forecast = listForecast[index];
                     CategoryEntity? category = listCategory?.where(
-                      (e) => e.id == budget.idCategory
+                      (e) => e.id == forecast.idCategory
                     ).toList()[0];
 
                     if (category != null) {
@@ -57,8 +55,8 @@ class CardListBudget extends StatelessWidget {
                         onTap: () {
                           BottomSheetHelper.show(
                             context: context,
-                            child: BottomSheetBudget(
-                              budget: budget,
+                            child: BottomSheetForecast(
+                              forecast: forecast,
                             ),
                           );
                         },
@@ -77,12 +75,12 @@ class CardListBudget extends StatelessWidget {
                               SizedBox(width: 8.w),
                               Expanded(
                                 child: Text(
-                                  budget.name ?? '',
+                                  forecast.name ?? '',
                                 ),
                               ),
                               SizedBox(width: 8.w),
                               Text(
-                                (budget.amount ?? 0).toSeparatedDecimal(),
+                                (forecast.amount ?? 0).toSeparatedDecimal(),
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                             ],
@@ -110,7 +108,7 @@ class CardListBudget extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      listBudget.map((e) => e.amount ?? 0).toList()
+                      listForecast.map((e) => e.amount ?? 0).toList()
                           .reduce((value, element) => value + element).toSeparatedDecimal(),
                       style: Theme.of(context).textTheme.bodyText1?.copyWith(
                         fontWeight: FontWeight.w600,
@@ -127,7 +125,7 @@ class CardListBudget extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      (listBudget.map((e) => e.amount ?? 0).toList()
+                      (listForecast.map((e) => e.amount ?? 0).toList()
                           .reduce((value, element) => value + element) * 12).toSeparatedDecimal(),
                       style: Theme.of(context).textTheme.bodyText1?.copyWith(
                         fontWeight: FontWeight.w600,
