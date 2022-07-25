@@ -8,6 +8,7 @@ import 'package:bank/modules/forecast/presentation/bloc/forecast_bloc.dart';
 import 'package:bank/modules/forecast/presentation/widgets/card_list_forecast.dart';
 import 'package:bank/modules/main/domain/entities/category_entity.dart';
 import 'package:bank/modules/period/domain/entities/period_entity.dart';
+import 'package:bank/modules/period/presentation/bloc/period_bloc.dart' as p;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,12 +27,15 @@ class ForecastPage extends StatefulWidget {
 
 class _ForecastPageState extends State<ForecastPage> {
   late ForecastBloc _forecastBloc;
+  late p.PeriodBloc _periodBloc;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _forecastBloc = BlocProvider.of<ForecastBloc>(context);
+      _periodBloc = BlocProvider.of<p.PeriodBloc>(context);
+
       _forecastBloc.add(const GetListForecastEvent());
       _forecastBloc.add(const GetListCategoryEvent());
       _forecastBloc.add(const GetListPeriodEvent());
@@ -116,7 +120,7 @@ class _ForecastPageState extends State<ForecastPage> {
                       child: DropdownButton<String>(
                         value: state.selectedPeriod,
                         onChanged: (value) {
-                          _forecastBloc.add(ChangePeriodEvent(id: value ?? ''));
+                          _periodBloc.add(p.ChangePeriodEvent(id: value ?? ''));
                         },
                         items: listPeriod?.map((e) => DropdownMenuItem(
                           value: e.id,

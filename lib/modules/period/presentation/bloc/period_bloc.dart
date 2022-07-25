@@ -80,5 +80,11 @@ class PeriodBloc extends Bloc<PeriodEvent, PeriodState> {
         ),
       ));
     });
+
+    on<ChangePeriodEvent>((event, emit) async {
+      emit(state.copyWith(
+        selectedPeriod: event.id,
+      ));
+    });
   }
 }

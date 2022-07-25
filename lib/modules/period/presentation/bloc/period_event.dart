@@ -62,3 +62,12 @@ class DeletePeriodEvent extends PeriodEvent {
     id,
   ];
 }
+
+class ChangePeriodEvent extends PeriodEvent {
+  final String id;
+
+  const ChangePeriodEvent({required this.id});
+
+  @override
+  List<Object?> get props => [id];
+}

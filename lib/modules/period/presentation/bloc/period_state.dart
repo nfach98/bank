@@ -5,12 +5,14 @@ class PeriodState extends Equatable {
   final DateTime? endDate;
   final String? message;
   final List<PeriodEntity>? listPeriod;
+  final String? selectedPeriod;
 
   const PeriodState({
     this.startDate,
     this.endDate,
     this.message,
     this.listPeriod,
+    this.selectedPeriod,
   });
 
   PeriodState copyWith({
@@ -18,12 +20,14 @@ class PeriodState extends Equatable {
     DateTime? endDate,
     String? message,
     List<PeriodEntity>? listPeriod,
+    String? selectedPeriod,
   }) {
     return PeriodState(
       startDate: startDate,
       endDate: endDate,
       message: message,
-      listPeriod: listPeriod ?? []
+      listPeriod: listPeriod ?? this.listPeriod,
+      selectedPeriod: selectedPeriod ?? this.selectedPeriod,
     );
   }
 
@@ -33,5 +37,6 @@ class PeriodState extends Equatable {
     endDate,
     message,
     listPeriod,
+    selectedPeriod,
   ];
 }
