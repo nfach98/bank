@@ -24,7 +24,7 @@ class _PeriodPageState extends State<PeriodPage> {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _periodBloc = BlocProvider.of<PeriodBloc>(context);
-      _periodBloc.add(GetListPeriodEvent());
+      _periodBloc.add(const GetListPeriodEvent());
     });
   }
 

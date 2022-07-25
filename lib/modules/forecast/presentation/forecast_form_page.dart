@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../common/config/themes.dart';
 import '../../main/domain/entities/category_entity.dart';
+import '../../main/presentation/bloc/main_bloc.dart';
 import '../domain/entities/forecast_entity.dart';
 import 'bloc/forecast_bloc.dart';
 
@@ -19,6 +20,8 @@ class ForecastFormPage extends StatefulWidget {
 
 class _ForecastFormPageState extends State<ForecastFormPage> {
   late ForecastBloc _forecastBloc;
+  late MainBloc _mainBloc;
+
   late String? _selectedPeriod;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
@@ -28,7 +31,8 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _forecastBloc = BlocProvider.of<ForecastBloc>(context);
-      _selectedPeriod = _forecastBloc.state.selectedPeriod;
+      _mainBloc = BlocProvider.of<MainBloc>(context);
+      _selectedPeriod = _mainBloc.state.selectedPeriod;
       if (widget.forecast != null) {
         _forecastBloc.add(ChangeCategoryTypeEvent(widget.forecast?.type ?? ''));
         _forecastBloc.add(ChangeCategoryEvent(widget.forecast?.idCategory ?? ''));

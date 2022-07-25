@@ -9,11 +9,13 @@ import 'package:equatable/equatable.dart';
 import '../../../main/domain/entities/category_entity.dart';
 import '../../../main/domain/usecases/get_list_category.dart';
 import '../../../period/domain/entities/period_entity.dart';
+import '../../../period/domain/usecases/get_list_period.dart';
 
 part 'actual_event.dart';
 part 'actual_state.dart';
 
 class ActualBloc extends Bloc<ActualEvent, ActualState> {
+  final GetListPeriod getListPeriod;
   final GetListCategory getListCategory;
   final GetListActual getListActual;
   final CreateActual createActual;
@@ -21,12 +23,27 @@ class ActualBloc extends Bloc<ActualEvent, ActualState> {
   final DeleteActual deleteActual;
 
   ActualBloc(
+      this.getListPeriod,
       this.getListCategory,
       this.getListActual,
       this.createActual,
       this.updateActual,
       this.deleteActual,
     ) : super(const ActualState()) {
+    on<GetListPeriodEvent>((event, emit) async {
+      final getListPeriodCase = await getListPeriod.execute();
+      emit(getListPeriodCase.fold(
+        (l) => state.copyWith(
+          message: l.message,
+        ),
+        (r) {
+          return state.copyWith(
+            listPeriod: r,
+          );
+        },
+      ));
+    });
+
     on<GetListCategoryEvent>((event, emit) async {
       final getListCategoryCase = await getListCategory.execute();
       emit(getListCategoryCase.fold(
@@ -53,7 +70,6 @@ class ActualBloc extends Bloc<ActualEvent, ActualState> {
     });
 
     on<ChangeDateEvent>((event, emit) async {
-      print(event.date.toString());
       emit(state.copyWith(
         date: event.date,
       ));

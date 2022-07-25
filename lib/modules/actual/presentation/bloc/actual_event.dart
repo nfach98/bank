@@ -4,6 +4,13 @@ abstract class ActualEvent extends Equatable {
   const ActualEvent();
 }
 
+class GetListPeriodEvent extends ActualEvent {
+  const GetListPeriodEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class ChangeCategoryEvent extends ActualEvent {
   final String id;
 

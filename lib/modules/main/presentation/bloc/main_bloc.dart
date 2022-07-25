@@ -24,10 +24,13 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       emit(getListPeriodCase.fold(
         (l) => state.copyWith(),
         (r) {
-          log(r.toString(), name: 'category');
           return state.copyWith();
         },
       ));
+    });
+
+    on<ChangeSelectedPeriodEvent>((event, emit) {
+      emit(state.copyWith(selectedPeriod: event.id));
     });
   }
 }

@@ -1,4 +1,5 @@
 import 'package:bank/common/constants/route_constants.dart';
+import 'package:bank/common/utils/datetime_formatter.dart';
 import 'package:bank/modules/actual/domain/entities/actual_entity.dart';
 import 'package:bank/modules/actual/presentation/bloc/actual_bloc.dart';
 import 'package:bank/modules/actual/presentation/widgets/card_list_actual.dart';
@@ -9,6 +10,8 @@ import "package:collection/collection.dart";
 import 'package:intl/intl.dart';
 
 import '../../../common/config/themes.dart';
+import '../../main/presentation/bloc/main_bloc.dart';
+import '../../period/domain/entities/period_entity.dart';
 
 class ActualPage extends StatefulWidget {
   const ActualPage({Key? key}) : super(key: key);
@@ -19,13 +22,16 @@ class ActualPage extends StatefulWidget {
 
 class _ActualPageState extends State<ActualPage> {
   late ActualBloc _actualBloc;
+  late MainBloc _mainBloc;
 
   @override
   void initState() {
     super.initState();
+    _actualBloc = BlocProvider.of<ActualBloc>(context);
+    _mainBloc = BlocProvider.of<MainBloc>(context);
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      _actualBloc = BlocProvider.of<ActualBloc>(context);
       _actualBloc.add(const GetListActualEvent());
+      _actualBloc.add(const GetListPeriodEvent());
       _actualBloc.add(const GetListCategoryEvent());
       _actualBloc.add(const ChangeCategoryTypeEvent('1'));
     });
@@ -77,6 +83,19 @@ class _ActualPageState extends State<ActualPage> {
         final last = listActualGrouped.lastOrNull?[0]?.date;
 
         final listPeriod = state.listPeriod;
+        String? selectedPeriod = _mainBloc.state.selectedPeriod;
+
+        if (selectedPeriod != null) {
+          listActualGrouped = listActualGrouped.where(
+            (e) {
+              PeriodEntity? period = listPeriod?.firstWhere((e) => e.id == selectedPeriod);
+              return DateTime.parse(e[0]?.date ?? '').isBetween(
+                DateTime.parse(period?.dateStart ?? ''),
+                DateTime.parse(period?.dateEnd ?? ''),
+              );
+            }
+          ).toList();
+        }
 
         // listActualGrouped = listActualGrouped.where((e) {
         //   final date = DateTime.parse(e[0]?.date ?? '');
@@ -106,30 +125,36 @@ class _ActualPageState extends State<ActualPage> {
           body: SingleChildScrollView(
             child: Column(
               children: [
-                // Padding(
-                //   padding: EdgeInsets.symmetric(horizontal: 12.w),
-                //   child: FractionallySizedBox(
-                //     widthFactor: 1.0,
-                //     child: DropdownButtonHideUnderline(
-                //       child: DropdownButton<String>(
-                //         value: state.selectedPeriod,
-                //         onChanged: (value) {
-                //           _actualBloc.add(ChangePeriodEvent(id: value ?? ''));
-                //         },
-                //         items: listPeriod?.map((e) => DropdownMenuItem(
-                //             value: e.id,
-                //             child: Text(
-                //               '${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateStart ?? ''))} '
-                //               '- ${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
-                //               style: Theme.of(context).textTheme.headline3,
-                //             )
-                //         )).toList() ?? [],
-                //       ),
-                //     ),
-                //   ),
-                // ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  child: FractionallySizedBox(
+                    widthFactor: 1.0,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _mainBloc.state.selectedPeriod,
+                        onChanged: (value) {
+                          setState(() {
+                            _mainBloc.add(ChangeSelectedPeriodEvent(id: value));
+                          });
+                        },
+                        items: listPeriod?.map((e) => DropdownMenuItem(
+                            value: e.id,
+                            child: Text(
+                              '${DateFormat('dd/MM/yyyy').format(DateTime.parse(e.dateStart ?? ''))} '
+                              '- ${DateFormat('dd/MM/yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
+                              style: Theme.of(context).textTheme.headline3?.copyWith(
+                                fontWeight: e.id == selectedPeriod
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                              ),
+                            )
+                        )).toList() ?? [],
+                      ),
+                    ),
+                  ),
+                ),
                 SizedBox(height: 12.h),
-                ListView.separated(
+                if (selectedPeriod != null) ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: listActualGrouped.length,

@@ -14,7 +14,7 @@ class InjectDependencyActual extends IconfigureDependencies {
 
   @override
   injectBloc() {
-    sl.registerFactory(() => ActualBloc(sl(), sl(), sl(), sl(), sl()));
+    sl.registerFactory(() => ActualBloc(sl(), sl(), sl(), sl(), sl(), sl()));
   }
 
   @override

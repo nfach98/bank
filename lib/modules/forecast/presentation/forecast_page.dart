@@ -16,6 +16,7 @@ import "package:collection/collection.dart";
 import 'package:intl/intl.dart';
 
 import '../../../common/config/themes.dart';
+import '../../main/presentation/bloc/main_bloc.dart';
 
 class ForecastPage extends StatefulWidget {
   const ForecastPage({Key? key}) : super(key: key);
@@ -26,12 +27,14 @@ class ForecastPage extends StatefulWidget {
 
 class _ForecastPageState extends State<ForecastPage> {
   late ForecastBloc _forecastBloc;
+  late MainBloc _mainBloc;
 
   @override
   void initState() {
     super.initState();
+    _forecastBloc = BlocProvider.of<ForecastBloc>(context);
+    _mainBloc = BlocProvider.of<MainBloc>(context);
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      _forecastBloc = BlocProvider.of<ForecastBloc>(context);
       _forecastBloc.add(const GetListForecastEvent());
       _forecastBloc.add(const GetListCategoryEvent());
       _forecastBloc.add(const GetListPeriodEvent());
@@ -75,8 +78,8 @@ class _ForecastPageState extends State<ForecastPage> {
           ));
         });
         listAllocationGrouped.sort((a, b) =>
-            ((b?.amount ?? 0) / totalAllocation * 100).compareTo(
-              (a?.amount ?? 0) / totalAllocation * 100)
+          ((b?.amount ?? 0) / totalAllocation * 100).compareTo(
+            (a?.amount ?? 0) / totalAllocation * 100)
         );
 
         int remaining = 0;
@@ -89,6 +92,13 @@ class _ForecastPageState extends State<ForecastPage> {
         remaining = income - outcome;
 
         List<PeriodEntity>? listPeriod = state.listPeriod;
+        String? selectedPeriod = _mainBloc.state.selectedPeriod;
+
+        if (selectedPeriod != null) {
+          listAllocationGrouped = listAllocationGrouped.where(
+            (e) => e?.idPeriod == selectedPeriod
+          ).toList();
+        }
 
         return Scaffold(
           backgroundColor: Colors.transparent,
@@ -114,16 +124,22 @@ class _ForecastPageState extends State<ForecastPage> {
                     widthFactor: 1.0,
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
-                        value: state.selectedPeriod,
+                        value: selectedPeriod,
                         onChanged: (value) {
-                          _forecastBloc.add(ChangePeriodEvent(id: value ?? ''));
+                          setState(() {
+                            _mainBloc.add(ChangeSelectedPeriodEvent(id: value));
+                          });
                         },
                         items: listPeriod?.map((e) => DropdownMenuItem(
                           value: e.id,
                           child: Text(
-                            '${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateStart ?? ''))} '
-                            '- ${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
-                            style: Theme.of(context).textTheme.headline3,
+                            '${DateFormat('dd/MM/yyyy').format(DateTime.parse(e.dateStart ?? ''))} '
+                            '- ${DateFormat('dd/MM/yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
+                            style: Theme.of(context).textTheme.headline3?.copyWith(
+                              fontWeight: e.id == selectedPeriod
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                            ),
                           )
                         )).toList() ?? [],
                       ),
@@ -131,7 +147,7 @@ class _ForecastPageState extends State<ForecastPage> {
                   ),
                 ),
                 SizedBox(height: 12.h),
-                ListView.separated(
+                if (selectedPeriod != null) ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: listCategoryTypes?.length ?? 0,

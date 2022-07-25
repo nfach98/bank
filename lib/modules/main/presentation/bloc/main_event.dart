@@ -32,3 +32,14 @@ class GetCategoryEvent extends MainEvent {
   @override
   List<Object?> get props => [];
 }
+
+class ChangeSelectedPeriodEvent extends MainEvent {
+  final String? id;
+
+  const ChangeSelectedPeriodEvent({this.id});
+
+  @override
+  List<Object?> get props => [
+    id,
+  ];
+}
