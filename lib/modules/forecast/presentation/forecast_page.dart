@@ -7,11 +7,13 @@ import 'package:bank/modules/forecast/domain/entities/forecast_entity.dart';
 import 'package:bank/modules/forecast/presentation/bloc/forecast_bloc.dart';
 import 'package:bank/modules/forecast/presentation/widgets/card_list_forecast.dart';
 import 'package:bank/modules/main/domain/entities/category_entity.dart';
+import 'package:bank/modules/period/domain/entities/period_entity.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import "package:collection/collection.dart";
+import 'package:intl/intl.dart';
 
 import '../../../common/config/themes.dart';
 
@@ -32,6 +34,7 @@ class _ForecastPageState extends State<ForecastPage> {
       _forecastBloc = BlocProvider.of<ForecastBloc>(context);
       _forecastBloc.add(const GetListForecastEvent());
       _forecastBloc.add(const GetListCategoryEvent());
+      _forecastBloc.add(const GetListPeriodEvent());
       _forecastBloc.add(const ChangeCategoryTypeEvent('1'));
     });
   }
@@ -85,6 +88,8 @@ class _ForecastPageState extends State<ForecastPage> {
           : 0;
         remaining = income - outcome;
 
+        List<PeriodEntity>? listPeriod = state.listPeriod;
+
         return Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
@@ -103,6 +108,28 @@ class _ForecastPageState extends State<ForecastPage> {
           body: SingleChildScrollView(
             child: Column(
               children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  child: FractionallySizedBox(
+                    widthFactor: 1.0,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: state.selectedPeriod,
+                        onChanged: (value) {
+                          _forecastBloc.add(ChangePeriodEvent(id: value ?? ''));
+                        },
+                        items: listPeriod?.map((e) => DropdownMenuItem(
+                          value: e.id,
+                          child: Text(
+                            '${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateStart ?? ''))} '
+                            '- ${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
+                            style: Theme.of(context).textTheme.headline3,
+                          )
+                        )).toList() ?? [],
+                      ),
+                    ),
+                  ),
+                ),
                 SizedBox(height: 12.h),
                 ListView.separated(
                   shrinkWrap: true,
@@ -245,7 +272,7 @@ class _ForecastPageState extends State<ForecastPage> {
             onPressed: () async {
               await Navigator.pushNamed(
                 context,
-                RouteConstants.budgetForm,
+                RouteConstants.forecastForm,
               );
               _forecastBloc.add(const GetListForecastEvent());
             },

@@ -83,12 +83,12 @@ class _PeriodPageState extends State<PeriodPage> {
                             vertical: 20.h,
                           ),
                           child: Text(
-                            '${DateFormat('dd MMM yyyy').format(DateTime.parse(period?.dateStart ?? ''))} '
-                                '- ${DateFormat('dd MMM yyyy').format(DateTime.parse(period?.dateEnd ?? ''))}',
+                            '${DateFormat('dd MMM yyyy').format(DateTime.parse(period.dateStart ?? ''))} '
+                            '- ${DateFormat('dd MMM yyyy').format(DateTime.parse(period.dateEnd ?? ''))}',
                             style: Theme.of(context).textTheme.headline3?.copyWith(
                               color: isNow
-                                  ? BankTheme.colors.white
-                                  : BankTheme.colors.black,
+                                ? BankTheme.colors.white
+                                : BankTheme.colors.black,
                             ),
                           ),
                         ),

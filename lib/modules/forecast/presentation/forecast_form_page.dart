@@ -78,7 +78,11 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
             child: Scaffold(
               appBar: AppBar(
                 elevation: 0,
-                title: const Text('New Budget'),
+                title: Text(
+                  widget.forecast == null
+                  ? 'New Forecast'
+                  : 'Update Forecast'
+                ),
               ),
               body: Column(
                 children: [
@@ -301,7 +305,7 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                         ),
                       ),
                       child: Text(
-                        widget.forecast == null ? 'Create Budget' : 'Update Budget',
+                        widget.forecast == null ? 'Create Forecast' : 'Update Forecast',
                         style: Theme.of(context).textTheme.headline3?.copyWith(
                           color: BankTheme.colors.white,
                         ),

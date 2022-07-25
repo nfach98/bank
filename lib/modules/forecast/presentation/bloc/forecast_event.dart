@@ -100,3 +100,12 @@ class GetListCategoryEvent extends ForecastEvent {
   @override
   List<Object?> get props => [];
 }
+
+class ChangePeriodEvent extends ForecastEvent {
+  final String id;
+
+  const ChangePeriodEvent({required this.id});
+
+  @override
+  List<Object?> get props => [id];
+}

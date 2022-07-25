@@ -137,5 +137,11 @@ class ForecastBloc extends Bloc<ForecastEvent, ForecastState> {
         ),
       ));
     });
+
+    on<ChangePeriodEvent>((event, emit) async {
+      emit(state.copyWith(
+        selectedPeriod: event.id,
+      ));
+    });
   }
 }

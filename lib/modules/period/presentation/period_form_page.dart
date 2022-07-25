@@ -50,105 +50,110 @@ class _PeriodFormPageState extends State<PeriodFormPage> {
                 : 'Edit Period'
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(12).r,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FractionallySizedBox(
-                  widthFactor: 1.0,
-                  child: InkWell(
-                    onTap: () async {
-                      DateTimeRange? date = await showDateRangePicker(
-                        context: context,
-                        initialDateRange: state.startDate == null || state.endDate == null
-                          ? null
-                          : DateTimeRange(
-                            start: state.startDate!,
-                            end: state.endDate!,
-                          ),
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime(2100),
-                        builder: (_, child) => Theme(
-                          data: Theme.of(context).copyWith(
-                            colorScheme: ColorScheme.light(
-                              primary: Theme.of(context).primaryColor,
+          body:  Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(12).r,
+                  child: Column(
+                    children: [
+                      FractionallySizedBox(
+                        widthFactor: 1.0,
+                        child: InkWell(
+                          onTap: () async {
+                            DateTimeRange? date = await showDateRangePicker(
+                                context: context,
+                                initialDateRange: state.startDate == null || state.endDate == null
+                                    ? null
+                                    : DateTimeRange(
+                                  start: state.startDate!,
+                                  end: state.endDate!,
+                                ),
+                                firstDate: DateTime(1900),
+                                lastDate: DateTime(2100),
+                                builder: (_, child) => Theme(
+                                  data: Theme.of(context).copyWith(
+                                    colorScheme: ColorScheme.light(
+                                      primary: Theme.of(context).primaryColor,
+                                    ),
+                                    textButtonTheme: TextButtonThemeData(
+                                      style: TextButton.styleFrom(
+                                        primary: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                  child: child!,
+                                )
+                            );
+                            if (date != null) {
+                              _periodBloc.add(ChangeDateTimeRangeEvent(
+                                startDate: date.start,
+                                endDate: date.end,
+                              ));
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(12).r,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.calendar,
+                                  size: 20.r,
+                                  color: state.startDate != null && state.endDate != null
+                                      ? Theme.of(context).primaryColor
+                                      : BankTheme.colors.grey,
+                                ),
+                                SizedBox(width: 8.w),
+                                Expanded(
+                                  child: Text(
+                                    state.startDate == null || state.endDate == null
+                                        ? 'Choose Date'
+                                        : '${DateFormat('dd MMMM yyyy').format(state.startDate!)}'
+                                        ' - ${DateFormat('dd MMMM yyyy').format(state.endDate!)}',
+                                    style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                                      color: state.startDate != null || state.endDate != null
+                                          ? BankTheme.colors.black
+                                          : BankTheme.colors.grey,
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                            textButtonTheme: TextButtonThemeData(
-                              style: TextButton.styleFrom(
-                                primary: Theme.of(context).primaryColor,
-                              ),
-                            ),
                           ),
-                          child: child!,
-                        )
-                      );
-                      if (date != null) {
-                        _periodBloc.add(ChangeDateTimeRangeEvent(
-                          startDate: date.start,
-                          endDate: date.end,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              FractionallySizedBox(
+                widthFactor: 1.0,
+                child: TextButton(
+                  onPressed: () {
+                    if (state.startDate != null && state.endDate != null) {
+                      if (widget.period != null) {
+                        _periodBloc.add(UpdatePeriodEvent(
+                          id: widget.period?.id ?? '',
+                          startDate: state.startDate!,
+                          endDate: state.endDate!,
+                        ));
+                      } else {
+                        _periodBloc.add(CreatePeriodEvent(
+                          startDate: state.startDate!,
+                          endDate: state.endDate!,
                         ));
                       }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(12).r,
-                      child: Row(
-                        children: [
-                          Icon(
-                            FontAwesomeIcons.calendar,
-                            size: 20.r,
-                            color: state.startDate != null && state.endDate != null
-                              ? Theme.of(context).primaryColor
-                              : BankTheme.colors.grey,
-                          ),
-                          SizedBox(width: 8.w),
-                          Expanded(
-                            child: Text(
-                              state.startDate == null || state.endDate == null
-                                ? 'Choose Date'
-                                : '${DateFormat('dd MMMM yyyy').format(state.startDate!)}'
-                                ' - ${DateFormat('dd MMMM yyyy').format(state.endDate!)}',
-                              style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                                color: state.startDate != null || state.endDate != null
-                                    ? BankTheme.colors.black
-                                    : BankTheme.colors.grey,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                FractionallySizedBox(
-                  widthFactor: 1.0,
-                  child: TextButton(
-                    onPressed: () {
-                      if (state.startDate != null && state.endDate != null) {
-                        if (widget.period != null) {
-                          _periodBloc.add(UpdatePeriodEvent(
-                            id: widget.period?.id ?? '',
-                            startDate: state.startDate!,
-                            endDate: state.endDate!,
-                          ));
-                        } else {
-                          _periodBloc.add(CreatePeriodEvent(
-                            startDate: state.startDate!,
-                            endDate: state.endDate!,
-                          ));
-                        }
-                      }
-                    },
-                    child: Text(
+                    }
+                  },
+                  child: Text(
                       widget.period == null
-                        ? 'Create Period'
-                        : 'Update Period'
-                    ),
+                          ? 'Create Period'
+                          : 'Update Period'
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
