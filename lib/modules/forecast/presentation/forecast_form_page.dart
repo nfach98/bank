@@ -1,13 +1,12 @@
-import 'package:bank/modules/forecast/domain/entities/forecast_entity.dart';
-import 'package:bank/modules/forecast/presentation/bloc/forecast_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 
 import '../../../common/config/themes.dart';
 import '../../main/domain/entities/category_entity.dart';
+import '../domain/entities/forecast_entity.dart';
+import 'bloc/forecast_bloc.dart';
 
 class ForecastFormPage extends StatefulWidget {
   final ForecastEntity? forecast;
@@ -20,6 +19,7 @@ class ForecastFormPage extends StatefulWidget {
 
 class _ForecastFormPageState extends State<ForecastFormPage> {
   late ForecastBloc _forecastBloc;
+  late String? _selectedPeriod;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
 
@@ -28,10 +28,10 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _forecastBloc = BlocProvider.of<ForecastBloc>(context);
+      _selectedPeriod = _forecastBloc.state.selectedPeriod;
       if (widget.forecast != null) {
         _forecastBloc.add(ChangeCategoryTypeEvent(widget.forecast?.type ?? ''));
         _forecastBloc.add(ChangeCategoryEvent(widget.forecast?.idCategory ?? ''));
-        _forecastBloc.add(ChangeDateEvent(DateTime.now()));
         _nameController.text = widget.forecast?.name ?? '';
         _amountController.text = widget.forecast?.amount?.toString() ?? '';
       }
@@ -48,7 +48,6 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
         builder: (_, state) {
           String? selectedCategory = state.selectedCategory;
           String? selectedTypeCategory = state.selectedTypeCategory;
-          DateTime? selectedDate = state.date;
 
           List<CategoryEntity>? listCategory = state.listCategory?.where(
             (e) => e.type == selectedTypeCategory).toList();
@@ -74,13 +73,12 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
           return WillPopScope(
             onWillPop: () async {
               _forecastBloc.add(const ChangeCategoryEvent(''));
-              _forecastBloc.add(ChangeDateEvent(DateTime.now()));
               return true;
             },
             child: Scaffold(
               appBar: AppBar(
                 elevation: 0,
-                title: const Text('New Forecast'),
+                title: const Text('New Budget'),
               ),
               body: Column(
                 children: [
@@ -140,15 +138,15 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                                 return GestureDetector(
                                   onTap: () {
                                     _forecastBloc.add(ChangeCategoryEvent(
-                                        category?.id ?? ''
+                                      category?.id ?? ''
                                     ));
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12).r,
                                       color: category?.id == selectedCategory
-                                        ? Theme.of(context).primaryColor
-                                        : BankTheme.colors.white,
+                                          ? Theme.of(context).primaryColor
+                                          : BankTheme.colors.white,
                                     ),
                                     child: Center(
                                       child: Column(
@@ -187,65 +185,6 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                                   ),
                                 );
                               },
-                            ),
-                          ),
-                          SizedBox(height: 8.h),
-                          FractionallySizedBox(
-                            widthFactor: 1.0,
-                            child: InkWell(
-                              onTap: () async {
-                                final date = await showDatePicker(
-                                  context: context,
-                                  initialDate: selectedDate ?? DateTime.now(),
-                                  firstDate: DateTime(1900),
-                                  lastDate: DateTime(2100),
-                                  builder: (_, child) => Theme(
-                                    data: Theme.of(context).copyWith(
-                                      colorScheme: ColorScheme.light(
-                                        primary: Theme.of(context).primaryColor,
-                                      ),
-                                      textButtonTheme: TextButtonThemeData(
-                                        style: TextButton.styleFrom(
-                                          primary: Theme.of(context).primaryColor,
-                                        ),
-                                      ),
-                                    ),
-                                    child: child!,
-                                  )
-                                );
-                                if (date != null && date != selectedDate) {
-                                  _forecastBloc.add(ChangeDateEvent(date));
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(12).r,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      FontAwesomeIcons.calendar,
-                                      size: 20.r,
-                                      color: selectedDate != null
-                                        ? Theme.of(context).primaryColor
-                                        : BankTheme.colors.grey,
-                                    ),
-                                    SizedBox(width: 8.w),
-                                    Expanded(
-                                      child: Text(
-                                        selectedDate != null
-                                          ? DateFormat('dd MMMM yyyy').format(
-                                              selectedDate
-                                          )
-                                          : 'Select date',
-                                        style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                                          color: selectedDate != null
-                                            ? BankTheme.colors.black
-                                            : BankTheme.colors.grey,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
                             ),
                           ),
                           SizedBox(height: 8.h),
@@ -310,9 +249,9 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                     child: TextButton(
                       onPressed: () {
                         CategoryEntity? category;
-                        // bool isIncome = selectedTypeCategory == '2';
-                        // bool isSufficientBudget = (selectedTypeCategory == '1' || selectedTypeCategory == '3')
-                        //     && remaining - int.parse(_amountController.text) >= 0;
+                        bool isIncome = selectedTypeCategory == '2';
+                        bool isSufficientBudget = (selectedTypeCategory == '1' || selectedTypeCategory == '3')
+                            && remaining - int.parse(_amountController.text) >= 0;
 
                         var cat = listCategory?.where(
                           (e) => e.id == selectedCategory
@@ -323,31 +262,38 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
 
                         if (selectedCategory != null
                             && selectedTypeCategory != null
-                            && selectedDate != null
                             && category?.type == selectedTypeCategory
                             && _nameController.text.isNotEmpty
                             && _amountController.text.isNotEmpty
+                            // && (isIncome || isSufficientBudget)
                         ) {
                           if (widget.forecast != null) {
                             _forecastBloc.add(UpdateForecastEvent(
                               id: widget.forecast?.id ?? '',
+                              idPeriod: _selectedPeriod ?? '',
                               idCategory: selectedCategory,
                               type: selectedTypeCategory,
                               name: _nameController.text,
                               amount: int.parse(_amountController.text),
-                              date: DateFormat('yyyy-MM-dd').format(selectedDate),
                             ));
                             _forecastBloc.add(const GetListForecastEvent());
                           } else {
                             _forecastBloc.add(CreateForecastEvent(
+                              idPeriod: _selectedPeriod ?? '',
                               idCategory: selectedCategory,
                               type: selectedTypeCategory,
                               name: _nameController.text,
                               amount: int.parse(_amountController.text),
-                              date: DateFormat('yyyy-MM-dd').format(selectedDate),
                             ));
                           }
                         }
+                        // else if (!isSufficientBudget) {
+                        //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        //     content: Text(
+                        //       'Your budget is insufficient to add this plan'
+                        //     ),
+                        //   ));
+                        // }
                       },
                       style: Theme.of(context).textButtonTheme.style?.copyWith(
                         padding: MaterialStateProperty.all(
@@ -355,9 +301,7 @@ class _ForecastFormPageState extends State<ForecastFormPage> {
                         ),
                       ),
                       child: Text(
-                        widget.forecast == null
-                            ? 'Create Forecast'
-                            : 'Update Forecast',
+                        widget.forecast == null ? 'Create Budget' : 'Update Budget',
                         style: Theme.of(context).textTheme.headline3?.copyWith(
                           color: BankTheme.colors.white,
                         ),

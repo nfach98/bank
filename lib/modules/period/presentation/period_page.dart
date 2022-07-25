@@ -1,10 +1,12 @@
 import 'package:bank/common/config/themes.dart';
 import 'package:bank/modules/period/domain/entities/period_entity.dart';
 import 'package:bank/modules/period/presentation/period_form_page.dart';
+import 'package:bank/modules/period/presentation/widgets/bottom_sheet_period.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import '../../../common/utils/bottom_sheet_helper.dart';
 import 'bloc/period_bloc.dart';
 
 class PeriodPage extends StatefulWidget {
@@ -60,27 +62,40 @@ class _PeriodPageState extends State<PeriodPage> {
                       || DateTime.parse(period?.dateStart ?? '').isAtSameMomentAs(DateTime.now()))
                   && DateTime.parse(period?.dateEnd ?? '').isAfter(DateTime.now());
 
-                  return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 12.w),
-                    color: isNow
-                      ? Theme.of(context).primaryColor
-                      : BankTheme.colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                        vertical: 20.h,
-                      ),
-                      child: Text(
-                        '${DateFormat('dd MMM yyyy').format(DateTime.parse(period?.dateStart ?? ''))} '
-                            '- ${DateFormat('dd MMM yyyy').format(DateTime.parse(period?.dateEnd ?? ''))}',
-                        style: Theme.of(context).textTheme.headline3?.copyWith(
-                          color: isNow
-                            ? BankTheme.colors.white
-                            : BankTheme.colors.black,
+                  if (period != null) {
+                    return InkWell(
+                      onTap: () {
+                        BottomSheetHelper.show(
+                          context: context,
+                          child: BottomSheetPeriod(
+                            period: period,
+                          ),
+                        );
+                      },
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal: 12.w),
+                        color: isNow
+                          ? Theme.of(context).primaryColor
+                          : BankTheme.colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 20.h,
+                          ),
+                          child: Text(
+                            '${DateFormat('dd MMM yyyy').format(DateTime.parse(period?.dateStart ?? ''))} '
+                                '- ${DateFormat('dd MMM yyyy').format(DateTime.parse(period?.dateEnd ?? ''))}',
+                            style: Theme.of(context).textTheme.headline3?.copyWith(
+                              color: isNow
+                                  ? BankTheme.colors.white
+                                  : BankTheme.colors.black,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  );
+                    );
+                  }
+                   return Container();
                 },
                 separatorBuilder: (_, index) => SizedBox(height: 12.h),
               ),
@@ -91,7 +106,7 @@ class _PeriodPageState extends State<PeriodPage> {
             onPressed: () async {
               await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => PeriodFormPage())
+                MaterialPageRoute(builder: (_) => const PeriodFormPage())
               );
               _periodBloc.add(const GetListPeriodEvent());
             },

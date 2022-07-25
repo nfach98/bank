@@ -1,7 +1,5 @@
 import 'package:bank/modules/actual/domain/entities/actual_entity.dart';
 import 'package:bank/modules/actual/domain/repositories/actual_repository.dart';
-import 'package:bank/modules/forecast/domain/entities/forecast_entity.dart';
-import 'package:bank/modules/forecast/domain/repositories/forecast_repository.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../common/errors/app_error.dart';

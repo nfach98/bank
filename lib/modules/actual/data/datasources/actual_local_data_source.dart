@@ -1,5 +1,4 @@
 import 'package:bank/modules/actual/data/models/actual_model.dart';
-import 'package:bank/modules/forecast/data/models/forecast_model.dart';
 import 'package:hive/hive.dart';
 
 abstract class ActualLocalDataSource {
@@ -36,14 +35,14 @@ class ActualLocalDataSourceImpl implements ActualLocalDataSource {
 
   @override
   Future<int> createActual({required String idCategory, required String type, required String name, required int amount, required String date}) async {
-    int key = await boxForecast.add(ForecastModel(
+    int key = await boxForecast.add(ActualModel(
       idCategory: idCategory,
       type: type,
       name: name,
       amount: amount,
       date: date,
     ).toMap);
-    await boxForecast.put(key, ForecastModel(
+    await boxForecast.put(key, ActualModel(
       id: key.toString(),
       idCategory: idCategory,
       type: type,
@@ -57,7 +56,7 @@ class ActualLocalDataSourceImpl implements ActualLocalDataSource {
 
   @override
   Future<void> updateActual({required String id, required String idCategory, required String type, required String name, required int amount, required String date}) async {
-    await boxForecast.put(int.parse(id), ForecastModel(
+    await boxForecast.put(int.parse(id), ActualModel(
       id: id,
       idCategory: idCategory,
       type: type,

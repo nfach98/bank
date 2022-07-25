@@ -238,7 +238,7 @@ class _ActualFormPageState extends State<ActualFormPage> {
                                       child: Text(
                                         selectedDate != null
                                           ? DateFormat('dd MMMM yyyy').format(
-                                              selectedDate
+                                            selectedDate
                                           )
                                           : 'Select date',
                                         style: Theme.of(context).textTheme.bodyText1?.copyWith(

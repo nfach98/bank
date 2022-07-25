@@ -20,7 +20,6 @@ class ForecastRepositoryImpl implements ForecastRepository {
         type: e.type,
         name: e.name,
         amount: e.amount,
-        date: e.date,
       )).toList());
     } on AppError catch (e) {
       return Left(e);
@@ -29,19 +28,19 @@ class ForecastRepositoryImpl implements ForecastRepository {
 
   @override
   Future<Either<AppError, int>> createForecast({
+    required String idPeriod,
     required String idCategory,
     required String type,
     required String name,
     required int amount,
-    required String date,
   }) async {
     try {
       final result = await _localDataSource.createForecast(
+        idPeriod: idPeriod,
         idCategory: idCategory,
         type: type,
         name: name,
-        amount: amount,
-        date: date,
+        amount: amount
       );
       return Right(result);
     } on AppError catch (e) {
@@ -50,15 +49,15 @@ class ForecastRepositoryImpl implements ForecastRepository {
   }
 
   @override
-  Future<Either<AppError, void>> updateForecast({required String id, required String idCategory, required String type, required String name, required int amount, required String date}) async {
+  Future<Either<AppError, void>> updateForecast({required String id, required String idPeriod, required String idCategory, required String type, required String name, required int amount}) async {
     try {
       final result = await _localDataSource.updateForecast(
         id: id,
+        idPeriod: idPeriod,
         idCategory: idCategory,
         type: type,
         name: name,
-        amount: amount,
-        date: date,
+        amount: amount
       );
       return Right(result);
     } on AppError catch (e) {

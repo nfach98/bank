@@ -1,32 +1,32 @@
-import 'package:bank/modules/forecast/domain/entities/forecast_entity.dart';
+import 'package:bank/modules/period/domain/entities/period_entity.dart';
+import 'package:bank/modules/period/presentation/bloc/period_bloc.dart';
+import 'package:bank/modules/period/presentation/period_form_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../bloc/forecast_bloc.dart';
-import '../forecast_form_page.dart';
+class BottomSheetPeriod extends StatelessWidget {
+  final PeriodEntity period;
 
-class BottomSheetForecast extends StatelessWidget {
-  final ForecastEntity forecast;
-
-  const BottomSheetForecast({Key? key, required this.forecast}) : super(key: key);
+  const BottomSheetPeriod({Key? key, required this.period}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final ForecastBloc _budgetBloc = BlocProvider.of<ForecastBloc>(context);
+    final PeriodBloc _budgetBloc = BlocProvider.of<PeriodBloc>(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InkWell(
-          onTap: () {
-            Navigator.pushReplacement(
+          onTap: () async {
+            await Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => ForecastFormPage(
-                forecast: forecast,
+              MaterialPageRoute(builder: (_) => PeriodFormPage(
+                period: period,
               ))
             );
+            _budgetBloc.add(const GetListPeriodEvent());
           },
           child: Container(
             padding: const EdgeInsets.symmetric(
@@ -54,8 +54,8 @@ class BottomSheetForecast extends StatelessWidget {
         ),
         InkWell(
           onTap: () {
-            _budgetBloc.add(DeleteForecastEvent(id: forecast.id ?? ''));
-            _budgetBloc.add(const GetListForecastEvent());
+            _budgetBloc.add(DeletePeriodEvent(id: period.id ?? ''));
+            _budgetBloc.add(const GetListPeriodEvent());
             Navigator.pop(context);
           },
           child: Container(

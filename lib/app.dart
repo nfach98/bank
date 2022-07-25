@@ -2,7 +2,6 @@ import 'package:bank/common/config/themes.dart';
 import 'package:bank/common/constants/route_constants.dart';
 import 'package:bank/modules/actual/presentation/bloc/actual_bloc.dart';
 import 'package:bank/modules/budget/presentation/bloc/budget_bloc.dart';
-import 'package:bank/modules/forecast/presentation/bloc/forecast_bloc.dart';
 import 'package:bank/modules/main/presentation/bloc/main_bloc.dart';
 import 'package:bank/modules/period/presentation/bloc/period_bloc.dart';
 import 'package:bank/routes.dart';
@@ -11,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'injection_container.dart';
+import 'modules/forecast/presentation/bloc/forecast_bloc.dart';
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);

@@ -5,9 +5,9 @@ import 'package:bank/modules/forecast/data/models/forecast_model.dart';
 import 'package:hive/hive.dart';
 
 abstract class ForecastLocalDataSource {
-  Future<int> createForecast({required String idCategory, required String type, required String name, required int amount, required String date});
+  Future<int> createForecast({required String idPeriod, required String idCategory, required String type, required String name, required int amount});
 
-  Future<void> updateForecast({required String id, required String idCategory, required String type, required String name, required int amount, required String date});
+  Future<void> updateForecast({required String id, required String idPeriod, required String idCategory, required String type, required String name, required int amount});
 
   Future<void> deleteForecast({required String id});
 
@@ -25,11 +25,11 @@ class ForecastLocalDataSourceImpl implements ForecastLocalDataSource {
       final value = boxForecast.get(e);
       return ForecastModel(
         id: value['id'],
+        idPeriod: value['id_period'],
         idCategory: value['id_category'],
         type: value['type'],
         name: value['name'],
         amount: value['amount'],
-        date: value['date'],
       );
     }).toList();
 
@@ -37,35 +37,35 @@ class ForecastLocalDataSourceImpl implements ForecastLocalDataSource {
   }
 
   @override
-  Future<int> createForecast({required String idCategory, required String type, required String name, required int amount, required String date}) async {
+  Future<int> createForecast({required String idPeriod, required String idCategory, required String type, required String name, required int amount}) async {
     int key = await boxForecast.add(ForecastModel(
       idCategory: idCategory,
+      idPeriod: idPeriod,
       type: type,
       name: name,
       amount: amount,
-      date: date,
     ).toMap);
     await boxForecast.put(key, ForecastModel(
       id: key.toString(),
+      idPeriod: idPeriod,
       idCategory: idCategory,
       type: type,
       name: name,
       amount: amount,
-      date: date,
     ).toMap);
 
     return key;
   }
 
   @override
-  Future<void> updateForecast({required String id, required String idCategory, required String type, required String name, required int amount, required String date}) async {
+  Future<void> updateForecast({required String id, required String idPeriod, required String idCategory, required String type, required String name, required int amount}) async {
     await boxForecast.put(int.parse(id), ForecastModel(
       id: id,
+      idPeriod: idPeriod,
       idCategory: idCategory,
       type: type,
       name: name,
       amount: amount,
-      date: date,
     ).toMap);
   }
 

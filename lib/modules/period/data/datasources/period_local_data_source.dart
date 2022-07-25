@@ -3,7 +3,8 @@ import 'package:hive/hive.dart';
 
 abstract class PeriodLocalDataSource {
   Future<int> createPeriod({required String dateStart, required String dateEnd});
-
+  Future<void> updatePeriod({required String id, required String dateStart, required String dateEnd});
+  Future<void> deletePeriod({required String id});
   Future<List<PeriodModel>> getListPeriod();
 }
 
@@ -14,6 +15,11 @@ class PeriodLocalDataSourceImpl implements PeriodLocalDataSource {
   @override
   Future<int> createPeriod({required String dateStart, required String dateEnd}) async {
     int key = await boxPeriods.add(PeriodModel(
+      dateStart: dateStart,
+      dateEnd: dateEnd,
+    ).toMap);
+    await boxPeriods.put(key, PeriodModel(
+      id: key.toString(),
       dateStart: dateStart,
       dateEnd: dateEnd,
     ).toMap);
@@ -33,5 +39,19 @@ class PeriodLocalDataSourceImpl implements PeriodLocalDataSource {
     }).toList();
 
     return list;
+  }
+
+  @override
+  Future<void> deletePeriod({required String id}) async {
+    await boxPeriods.delete(int.parse(id));
+  }
+
+  @override
+  Future<void> updatePeriod({required String id, required String dateStart, required String dateEnd}) async {
+    await boxPeriods.put(int.parse(id), PeriodModel(
+      id: id,
+      dateStart: dateStart,
+      dateEnd: dateEnd,
+    ).toMap);
   }
 }

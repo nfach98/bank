@@ -1,20 +1,21 @@
-
 import 'package:bank/modules/forecast/domain/entities/forecast_entity.dart';
 import 'package:bank/modules/forecast/domain/usecases/create_forecast.dart';
 import 'package:bank/modules/forecast/domain/usecases/update_forecast.dart';
+import 'package:bank/modules/main/domain/entities/category_entity.dart';
+import 'package:bank/modules/main/domain/usecases/get_list_category.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../forecast/domain/usecases/delete_forecast.dart';
-import '../../../forecast/domain/usecases/get_list_forecast.dart';
-import '../../../main/domain/entities/category_entity.dart';
-import '../../../main/domain/usecases/get_list_category.dart';
 import '../../../period/domain/entities/period_entity.dart';
+import '../../../period/domain/usecases/get_list_period.dart';
+import '../../domain/usecases/delete_forecast.dart';
+import '../../domain/usecases/get_list_forecast.dart';
 
 part 'forecast_event.dart';
 part 'forecast_state.dart';
 
 class ForecastBloc extends Bloc<ForecastEvent, ForecastState> {
+  final GetListPeriod getListPeriod;
   final GetListCategory getListCategory;
   final GetListForecast getListForecast;
   final CreateForecast createForecast;
@@ -22,12 +23,27 @@ class ForecastBloc extends Bloc<ForecastEvent, ForecastState> {
   final DeleteForecast deleteForecast;
 
   ForecastBloc(
-      this.getListCategory,
+      this.getListPeriod,
       this.getListForecast,
       this.createForecast,
+      this.getListCategory,
       this.updateForecast,
       this.deleteForecast,
     ) : super(const ForecastState()) {
+    on<GetListPeriodEvent>((event, emit) async {
+      final getListPeriodCase = await getListPeriod.execute();
+      emit(getListPeriodCase.fold(
+        (l) => state.copyWith(
+          message: l.message,
+        ),
+        (r) {
+          return state.copyWith(
+            listPeriod: r,
+          );
+        },
+      ));
+    });
+
     on<GetListCategoryEvent>((event, emit) async {
       final getListCategoryCase = await getListCategory.execute();
       emit(getListCategoryCase.fold(
@@ -38,6 +54,12 @@ class ForecastBloc extends Bloc<ForecastEvent, ForecastState> {
           listCategory: r,
           listTypeCategory: r.map((e) => e.type ?? '').toSet().toList(),
         ),
+      ));
+    });
+
+    on<ChangeDropdownPeriodEvent>((event, emit) async {
+      emit(state.copyWith(
+        selectedPeriod: event.id,
       ));
     });
 
@@ -53,20 +75,13 @@ class ForecastBloc extends Bloc<ForecastEvent, ForecastState> {
       ));
     });
 
-    on<ChangeDateEvent>((event, emit) async {
-      print(event.date.toString());
-      emit(state.copyWith(
-        date: event.date,
-      ));
-    });
-
     on<CreateForecastEvent>((event, emit) async {
       final createBudgetCase = await createForecast.execute(CreateForecastParams(
+        idPeriod: event.idPeriod,
         idCategory: event.idCategory,
         type: event.type,
         name: event.name,
-        amount: event.amount,
-        date: event.date,
+        amount: event.amount
       ));
       emit(createBudgetCase.fold(
         (l) => state.copyWith(
@@ -81,11 +96,11 @@ class ForecastBloc extends Bloc<ForecastEvent, ForecastState> {
     on<UpdateForecastEvent>((event, emit) async {
       final updateBudgetCase = await updateForecast.execute(UpdateForecastParams(
         id: event.id,
+        idPeriod: event.idPeriod,
         idCategory: event.idCategory,
         type: event.type,
         name: event.name,
-        amount: event.amount,
-        date: event.date,
+        amount: event.amount
       ));
       emit(updateBudgetCase.fold(
         (l) => state.copyWith(
@@ -112,8 +127,8 @@ class ForecastBloc extends Bloc<ForecastEvent, ForecastState> {
     });
 
     on<GetListForecastEvent>((event, emit) async {
-      final getListForecaseCase = await getListForecast.execute();
-      emit(getListForecaseCase.fold(
+      final getListBudgetCase = await getListForecast.execute();
+      emit(getListBudgetCase.fold(
         (l) => state.copyWith(
           message: l.message,
         ),

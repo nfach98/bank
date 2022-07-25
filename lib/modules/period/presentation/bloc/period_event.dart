@@ -36,3 +36,29 @@ class GetListPeriodEvent extends PeriodEvent {
   @override
   List<Object?> get props => [];
 }
+
+class UpdatePeriodEvent extends PeriodEvent {
+  final String id;
+  final DateTime startDate;
+  final DateTime endDate;
+
+  const UpdatePeriodEvent({required this.id, required this.startDate, required this.endDate});
+
+  @override
+  List<Object?> get props => [
+    id,
+    startDate,
+    endDate,
+  ];
+}
+
+class DeletePeriodEvent extends PeriodEvent {
+  final String id;
+
+  const DeletePeriodEvent({required this.id});
+
+  @override
+  List<Object?> get props => [
+    id,
+  ];
+}
