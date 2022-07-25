@@ -9,8 +9,6 @@ import "package:collection/collection.dart";
 import 'package:intl/intl.dart';
 
 import '../../../common/config/themes.dart';
-import '../../period/domain/entities/period_entity.dart';
-import '../../period/presentation/bloc/period_bloc.dart' as p;
 
 class ActualPage extends StatefulWidget {
   const ActualPage({Key? key}) : super(key: key);
@@ -21,15 +19,12 @@ class ActualPage extends StatefulWidget {
 
 class _ActualPageState extends State<ActualPage> {
   late ActualBloc _actualBloc;
-  late p.PeriodBloc _periodBloc;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _actualBloc = BlocProvider.of<ActualBloc>(context);
-      _periodBloc = BlocProvider.of<p.PeriodBloc>(context);
-      
       _actualBloc.add(const GetListActualEvent());
       _actualBloc.add(const GetListCategoryEvent());
       _actualBloc.add(const ChangeCategoryTypeEvent('1'));
@@ -81,7 +76,7 @@ class _ActualPageState extends State<ActualPage> {
         final first = listActualGrouped.firstOrNull?[0]?.date;
         final last = listActualGrouped.lastOrNull?[0]?.date;
 
-        List<PeriodEntity>? listPeriod = state.listPeriod;
+        final listPeriod = state.listPeriod;
 
         // listActualGrouped = listActualGrouped.where((e) {
         //   final date = DateTime.parse(e[0]?.date ?? '');
@@ -111,28 +106,28 @@ class _ActualPageState extends State<ActualPage> {
           body: SingleChildScrollView(
             child: Column(
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  child: FractionallySizedBox(
-                    widthFactor: 1.0,
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: state.selectedPeriod,
-                        onChanged: (value) {
-                          _periodBloc.add(p.ChangePeriodEvent(id: value ?? ''));
-                        },
-                        items: listPeriod?.map((e) => DropdownMenuItem(
-                          value: e.id,
-                          child: Text(
-                            '${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateStart ?? ''))} '
-                            '- ${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
-                            style: Theme.of(context).textTheme.headline3,
-                          )
-                        )).toList() ?? [],
-                      ),
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: EdgeInsets.symmetric(horizontal: 12.w),
+                //   child: FractionallySizedBox(
+                //     widthFactor: 1.0,
+                //     child: DropdownButtonHideUnderline(
+                //       child: DropdownButton<String>(
+                //         value: state.selectedPeriod,
+                //         onChanged: (value) {
+                //           _actualBloc.add(ChangePeriodEvent(id: value ?? ''));
+                //         },
+                //         items: listPeriod?.map((e) => DropdownMenuItem(
+                //             value: e.id,
+                //             child: Text(
+                //               '${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateStart ?? ''))} '
+                //               '- ${DateFormat('dd MMM yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
+                //               style: Theme.of(context).textTheme.headline3,
+                //             )
+                //         )).toList() ?? [],
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 SizedBox(height: 12.h),
                 ListView.separated(
                   shrinkWrap: true,
