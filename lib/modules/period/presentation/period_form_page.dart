@@ -146,10 +146,14 @@ class _PeriodFormPageState extends State<PeriodFormPage> {
                       }
                     }
                   },
-                  child: Text(
-                      widget.period == null
-                          ? 'Create Period'
-                          : 'Update Period'
+                  style: Theme.of(context).textButtonTheme.style?.copyWith(
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.all(16).r
+                    ),
+                  ),
+                  child: Text(widget.period == null
+                    ? 'Create Period'
+                    : 'Update Period'
                   ),
                 ),
               ),

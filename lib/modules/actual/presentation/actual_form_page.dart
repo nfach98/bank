@@ -1,6 +1,7 @@
 import 'package:bank/common/utils/snack_bar_helper.dart';
 import 'package:bank/modules/actual/domain/entities/actual_entity.dart';
 import 'package:bank/modules/actual/presentation/bloc/actual_bloc.dart';
+import 'package:bank/modules/period/domain/entities/period_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,11 +10,12 @@ import 'package:intl/intl.dart';
 
 import '../../../common/config/themes.dart';
 import '../../main/domain/entities/category_entity.dart';
+import '../../main/presentation/bloc/main_bloc.dart';
 
 class ActualFormPage extends StatefulWidget {
-  final ActualEntity? actual;
+  final ActualFormParams? params;
 
-  const ActualFormPage({Key? key, this.actual}) : super(key: key);
+  const ActualFormPage({Key? key, this.params}) : super(key: key);
 
   @override
   State<ActualFormPage> createState() => _ActualFormPageState();
@@ -21,20 +23,22 @@ class ActualFormPage extends StatefulWidget {
 
 class _ActualFormPageState extends State<ActualFormPage> {
   late ActualBloc _actualBloc;
+  late MainBloc _mainBloc;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _actualBloc = BlocProvider.of<ActualBloc>(context);
+    _mainBloc = BlocProvider.of<MainBloc>(context);
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      _actualBloc = BlocProvider.of<ActualBloc>(context);
-      if (widget.actual != null) {
-        _actualBloc.add(ChangeCategoryTypeEvent(widget.actual?.type ?? ''));
-        _actualBloc.add(ChangeCategoryEvent(widget.actual?.idCategory ?? ''));
+      if (widget.params?.actual != null) {
+        _actualBloc.add(ChangeCategoryTypeEvent(widget.params?.actual?.type ?? ''));
+        _actualBloc.add(ChangeCategoryEvent(widget.params?.actual?.idCategory ?? ''));
         _actualBloc.add(ChangeDateEvent(DateTime.now()));
-        _nameController.text = widget.actual?.name ?? '';
-        _amountController.text = widget.actual?.amount?.toString() ?? '';
+        _nameController.text = widget.params?.actual?.name ?? '';
+        _amountController.text = widget.params?.actual?.amount?.toString() ?? '';
       }
     });
   }
@@ -47,6 +51,14 @@ class _ActualFormPageState extends State<ActualFormPage> {
       },
       child: BlocBuilder<ActualBloc, ActualState>(
         builder: (_, state) {
+          String? idSelectedPeriod = _mainBloc.state.selectedPeriod;
+          PeriodEntity? selectedPeriod;
+          if (idSelectedPeriod != null) {
+            selectedPeriod = state.listPeriod?.firstWhere(
+              (e) => e.id == idSelectedPeriod
+            );
+          }
+
           String? selectedCategory = state.selectedCategory;
           String? selectedTypeCategory = state.selectedTypeCategory;
           DateTime? selectedDate = state.date;
@@ -82,7 +94,7 @@ class _ActualFormPageState extends State<ActualFormPage> {
               appBar: AppBar(
                 elevation: 0,
                 title: Text(
-                  widget.actual == null
+                  widget.params?.actual == null
                     ? 'New Actual'
                     : 'Edit Actual'
                 ),
@@ -201,9 +213,15 @@ class _ActualFormPageState extends State<ActualFormPage> {
                               onTap: () async {
                                 final date = await showDatePicker(
                                   context: context,
-                                  initialDate: selectedDate ?? DateTime.now(),
-                                  firstDate: DateTime(1900),
-                                  lastDate: DateTime(2100),
+                                  initialDate: selectedDate ?? DateTime.parse(
+                                    selectedPeriod?.dateStart ?? ''
+                                  ),
+                                  firstDate: DateTime.parse(
+                                    selectedPeriod?.dateStart ?? ''
+                                  ),
+                                  lastDate: DateTime.parse(
+                                    selectedPeriod?.dateEnd ?? ''
+                                  ),
                                   builder: (_, child) => Theme(
                                     data: Theme.of(context).copyWith(
                                       colorScheme: ColorScheme.light(
@@ -333,9 +351,9 @@ class _ActualFormPageState extends State<ActualFormPage> {
                             && _nameController.text.isNotEmpty
                             && _amountController.text.isNotEmpty
                         ) {
-                          if (widget.actual != null) {
+                          if (widget.params?.actual != null) {
                             _actualBloc.add(UpdateActualEvent(
-                              id: widget.actual?.id ?? '',
+                              id: widget.params?.actual?.id ?? '',
                               idCategory: selectedCategory,
                               type: selectedTypeCategory,
                               name: _nameController.text,
@@ -380,7 +398,7 @@ class _ActualFormPageState extends State<ActualFormPage> {
                         ),
                       ),
                       child: Text(
-                        widget.actual == null
+                        widget.params?.actual == null
                             ? 'Create Actual'
                             : 'Update Actual',
                         style: Theme.of(context).textTheme.headline3?.copyWith(
@@ -397,4 +415,11 @@ class _ActualFormPageState extends State<ActualFormPage> {
       ),
     );
   }
+}
+
+class ActualFormParams {
+  final ActualEntity? actual;
+  final PeriodEntity? selectedPeriod;
+
+  ActualFormParams({this.actual, this.selectedPeriod});
 }

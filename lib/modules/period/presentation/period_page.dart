@@ -42,7 +42,7 @@ class _PeriodPageState extends State<PeriodPage> {
             backgroundColor: Colors.transparent,
             foregroundColor: BankTheme.colors.green,
             title: Text(
-              'Periode',
+              'Period',
               style: TextStyle(
                 fontWeight: FontWeight.normal,
                 color: Theme.of(context).primaryColor,

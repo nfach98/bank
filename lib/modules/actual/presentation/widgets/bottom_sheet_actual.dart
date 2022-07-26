@@ -1,3 +1,4 @@
+import 'package:bank/common/constants/route_constants.dart';
 import 'package:bank/modules/actual/domain/entities/actual_entity.dart';
 import 'package:bank/modules/actual/presentation/actual_form_page.dart';
 import 'package:bank/modules/actual/presentation/bloc/actual_bloc.dart';
@@ -21,11 +22,12 @@ class BottomSheetActual extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            Navigator.pushReplacement(
+            Navigator.pushReplacementNamed(
               context,
-              MaterialPageRoute(builder: (_) => ActualFormPage(
-                actual: actual,
-              ))
+              RouteConstants.actualForm,
+              arguments: ActualFormParams(
+                actual: actual
+              ),
             );
           },
           child: Container(

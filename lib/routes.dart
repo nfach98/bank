@@ -40,7 +40,12 @@ class AppRouter {
             builder: (_) => const ActualPage());
       case RouteConstants.actualForm:
         return MaterialPageRoute(
-            builder: (_) => const ActualFormPage());
+          builder: (_) => ActualFormPage(
+            params: routeSettings.arguments != null
+              ? routeSettings.arguments as ActualFormParams
+              : null
+          )
+        );
       default:
         return null;
     }

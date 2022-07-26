@@ -16,6 +16,7 @@ class ForecastRepositoryImpl implements ForecastRepository {
       final result = await _localDataSource.getListForecast();
       return Right(result.map((e) => ForecastEntity(
         id: e.id,
+        idPeriod: e.idPeriod,
         idCategory: e.idCategory,
         type: e.type,
         name: e.name,

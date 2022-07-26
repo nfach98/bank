@@ -46,12 +46,24 @@ class _ForecastPageState extends State<ForecastPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<ForecastBloc, ForecastState>(
       builder: (_, state) {
+        List<ForecastEntity>? listForecast;
+        List<PeriodEntity>? listPeriod = state.listPeriod;
+        String? idSelectedPeriod = _mainBloc.state.selectedPeriod;
+
+        if (idSelectedPeriod != null) {
+          listForecast = state.listForecast?.where(
+            (e) => e.idPeriod == idSelectedPeriod
+          ).toList();
+        } else {
+          listForecast = [];
+        }
+
         List<CategoryEntity>? listCategory = state.listCategory;
         List<String>? listCategoryTypes = listCategory?.map(
           (e) => e.type ?? ''
         ).toSet().toList();
 
-        List<ForecastEntity>? listForecast = state.listForecast;
+        // List<ForecastEntity>? listForecast = state.listForecast;
         List<ForecastEntity>? listAllocation = listForecast?.where(
           (e) => e.type == '1' || e.type == '3'
         ).toList();
@@ -91,14 +103,11 @@ class _ForecastPageState extends State<ForecastPage> {
           : 0;
         remaining = income - outcome;
 
-        List<PeriodEntity>? listPeriod = state.listPeriod;
-        String? selectedPeriod = _mainBloc.state.selectedPeriod;
-
-        if (selectedPeriod != null) {
-          listAllocationGrouped = listAllocationGrouped.where(
-            (e) => e?.idPeriod == selectedPeriod
-          ).toList();
-        }
+        // if (selectedPeriod != null) {
+        //   listAllocationGrouped = listAllocationGrouped.where(
+        //     (e) => e?.idPeriod == selectedPeriod
+        //   ).toList();
+        // }
 
         return Scaffold(
           backgroundColor: Colors.transparent,
@@ -115,174 +124,180 @@ class _ForecastPageState extends State<ForecastPage> {
               ),
             ),
           ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  child: FractionallySizedBox(
-                    widthFactor: 1.0,
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: selectedPeriod,
-                        onChanged: (value) {
-                          setState(() {
-                            _mainBloc.add(ChangeSelectedPeriodEvent(id: value));
-                          });
-                        },
-                        items: listPeriod?.map((e) => DropdownMenuItem(
+          body: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                child: FractionallySizedBox(
+                  widthFactor: 1.0,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: idSelectedPeriod,
+                      onChanged: (value) {
+                        setState(() {
+                          _mainBloc.add(ChangeSelectedPeriodEvent(id: value));
+                        });
+                      },
+                      items: listPeriod?.map((e) => DropdownMenuItem(
                           value: e.id,
                           child: Text(
                             '${DateFormat('dd/MM/yyyy').format(DateTime.parse(e.dateStart ?? ''))} '
-                            '- ${DateFormat('dd/MM/yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
+                                '- ${DateFormat('dd/MM/yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
                             style: Theme.of(context).textTheme.headline3?.copyWith(
-                              fontWeight: e.id == selectedPeriod
-                                ? FontWeight.w600
-                                : FontWeight.normal,
+                              fontWeight: e.id == idSelectedPeriod
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
                             ),
                           )
-                        )).toList() ?? [],
-                      ),
+                      )).toList() ?? [],
                     ),
                   ),
                 ),
-                SizedBox(height: 12.h),
-                if (selectedPeriod != null) ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: listCategoryTypes?.length ?? 0,
-                  itemBuilder: (_, index) {
-                    List<ForecastEntity>? list =
-                    listForecast?.where((e) => e.type == listCategoryTypes?[index]).toList();
+              ),
+              SizedBox(height: 12.h),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      if (idSelectedPeriod != null) ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: listCategoryTypes?.length ?? 0,
+                        itemBuilder: (_, index) {
+                          List<ForecastEntity>? list =
+                          listForecast?.where((e) => e.type == listCategoryTypes?[index]).toList();
 
-                    if (list != null && list.isNotEmpty) {
-                      return CardListForecast(
-                        listForecast: list,
-                        categoryType: listCategoryTypes?[index] ?? '',
-                      );
-                    }
+                          if (list != null && list.isNotEmpty) {
+                            return CardListForecast(
+                              listForecast: list,
+                              categoryType: listCategoryTypes?[index] ?? '',
+                            );
+                          }
 
-                    return Container();
-                  },
-                  separatorBuilder: (_, index) => SizedBox(height: 12.h),
-                ),
-                SizedBox(height: 12.h),
-                if (mapGroupedAllocation != null && mapGroupedAllocation.isNotEmpty) Card(
-                  margin: EdgeInsets.symmetric(horizontal: 16.w),
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16).r,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Monthly allocation',
-                          style: Theme.of(context).textTheme.headline3,
-                        ),
-                        Container(
-                          height: 1.h,
-                          margin: EdgeInsets.symmetric(vertical: 8.h),
-                          color: BankTheme.colors.grey.withOpacity(0.5),
-                        ),
-                        AspectRatio(
-                          aspectRatio: 1,
-                          child: PieChart(
-                            PieChartData(
-                              borderData: FlBorderData(
-                                show: false,
+                          return Container();
+                        },
+                        separatorBuilder: (_, index) => SizedBox(height: 12.h),
+                      ),
+                      SizedBox(height: 12.h),
+                      if (mapGroupedAllocation != null && mapGroupedAllocation.isNotEmpty) Card(
+                        margin: EdgeInsets.symmetric(horizontal: 16.w),
+                        elevation: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16).r,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Monthly allocation',
+                                style: Theme.of(context).textTheme.headline3,
                               ),
-                              sectionsSpace: 0,
-                              centerSpaceRadius: context.screenWidth / 8,
-                              sections: listAllocationGrouped.map((e) {
-                                // int value = (e.value as List<BudgetEntity>)
-                                //     .map((e) => e.amount ?? 0)
-                                //     .reduce((value, element) => value + element);
-                                CategoryEntity? category = listCategory?.where(
-                                    (c) => c.id == e?.idCategory
-                                ).toList()[0];
-                                double percentage = (e?.amount ?? 0) / totalAllocation * 100;
+                              Container(
+                                height: 1.h,
+                                margin: EdgeInsets.symmetric(vertical: 8.h),
+                                color: BankTheme.colors.grey.withOpacity(0.5),
+                              ),
+                              AspectRatio(
+                                aspectRatio: 1,
+                                child: PieChart(
+                                  PieChartData(
+                                    borderData: FlBorderData(
+                                      show: false,
+                                    ),
+                                    sectionsSpace: 0,
+                                    centerSpaceRadius: context.screenWidth / 8,
+                                    sections: listAllocationGrouped.map((e) {
+                                      // int value = (e.value as List<BudgetEntity>)
+                                      //     .map((e) => e.amount ?? 0)
+                                      //     .reduce((value, element) => value + element);
+                                      CategoryEntity? category = listCategory?.where(
+                                              (c) => c.id == e?.idCategory
+                                      ).toList()[0];
+                                      double percentage = (e?.amount ?? 0) / totalAllocation * 100;
 
-                                return PieChartSectionData(
-                                  color: Color(e?.color ?? 0xFFFFF).withOpacity(1.0),
-                                  value: percentage,
-                                  title: percentage > 15
-                                    ? '${category?.name}\n'
-                                      '(${percentage.toStringAsFixed(2)}.%)'
-                                    : '',
-                                  radius: context.screenWidth / 5,
-                                  titleStyle: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xffffffff),
+                                      return PieChartSectionData(
+                                        color: Color(e?.color ?? 0xFFFFF).withOpacity(1.0),
+                                        value: percentage,
+                                        title: percentage > 15
+                                            ? '${category?.name}\n'
+                                            '(${percentage.toStringAsFixed(2)}.%)'
+                                            : '',
+                                        radius: context.screenWidth / 5,
+                                        titleStyle: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xffffffff),
+                                        ),
+                                      );
+                                    }).toList(),
                                   ),
-                                );
-                              }).toList(),
-                            ),
+                                ),
+                              ),
+                              SizedBox(height: 20.h),
+                              if (remaining != 0) Row(
+                                children: [
+                                  const Expanded(
+                                    child: Text(
+                                        'Remaining budget'
+                                    ),
+                                  ),
+                                  Text(
+                                    remaining.toSeparatedDecimal(),
+                                    style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: remaining < 0
+                                          ? Colors.red
+                                          : BankTheme.colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 12.h),
+                              ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: listAllocationGrouped.length,
+                                itemBuilder: (_, index) {
+                                  ForecastEntity? budget = listAllocationGrouped[index];
+                                  CategoryEntity? category = listCategory?.firstWhere(
+                                          (c) => c.id == budget?.idCategory
+                                  );
+                                  double percentage =
+                                      (budget?.amount ?? 0) / totalAllocation * 100;
+
+                                  return Row(
+                                    children: [
+                                      Container(
+                                        width: 12.r,
+                                        height: 12.r,
+                                        margin: const EdgeInsets.only(right: 8).r,
+                                        color: Color(budget?.color ?? 0xFFFFF).withOpacity(1.0),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                            category?.name ?? ''
+                                        ),
+                                      ),
+                                      Text(
+                                        '${percentage.toStringAsFixed(2)} %',
+                                        style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                                separatorBuilder: (_, index) => SizedBox(height: 4.h),
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 20.h),
-                        if (remaining != 0) Row(
-                          children: [
-                            const Expanded(
-                              child: Text(
-                                'Remaining budget'
-                              ),
-                            ),
-                            Text(
-                              remaining.toSeparatedDecimal(),
-                              style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: remaining < 0
-                                  ? Colors.red
-                                  : BankTheme.colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 12.h),
-                        ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: listAllocationGrouped.length,
-                          itemBuilder: (_, index) {
-                            ForecastEntity? budget = listAllocationGrouped[index];
-                            CategoryEntity? category = listCategory?.firstWhere(
-                              (c) => c.id == budget?.idCategory
-                            );
-                            double percentage =
-                                (budget?.amount ?? 0) / totalAllocation * 100;
-
-                            return Row(
-                              children: [
-                                Container(
-                                  width: 12.r,
-                                  height: 12.r,
-                                  margin: const EdgeInsets.only(right: 8).r,
-                                  color: Color(budget?.color ?? 0xFFFFF).withOpacity(1.0),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    category?.name ?? ''
-                                  ),
-                                ),
-                                Text(
-                                  '${percentage.toStringAsFixed(2)} %',
-                                  style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                          separatorBuilder: (_, index) => SizedBox(height: 4.h),
-                        ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 80.h),
+                    ],
                   ),
                 ),
-                SizedBox(height: 80.h),
-              ],
-            ),
+              )
+            ],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {

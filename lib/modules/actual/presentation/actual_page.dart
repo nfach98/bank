@@ -42,6 +42,9 @@ class _ActualPageState extends State<ActualPage> {
     return BlocBuilder<ActualBloc, ActualState>(
       builder: (_, state) {
         List<ActualEntity>? listActual = state.listActual;
+        List<PeriodEntity>? listPeriod = state.listPeriod;
+        String? idSelectedPeriod = _mainBloc.state.selectedPeriod;
+
         Map? mapGroupedAllocation;
 
         final now = DateTime.now();
@@ -79,16 +82,10 @@ class _ActualPageState extends State<ActualPage> {
           ((b[0]?.date ?? '')).compareTo((a[0]?.date ?? ''))
         );
 
-        final first = listActualGrouped.firstOrNull?[0]?.date;
-        final last = listActualGrouped.lastOrNull?[0]?.date;
-
-        final listPeriod = state.listPeriod;
-        String? selectedPeriod = _mainBloc.state.selectedPeriod;
-
-        if (selectedPeriod != null) {
+        if (idSelectedPeriod != null) {
           listActualGrouped = listActualGrouped.where(
             (e) {
-              PeriodEntity? period = listPeriod?.firstWhere((e) => e.id == selectedPeriod);
+              PeriodEntity? period = listPeriod?.firstWhere((e) => e.id == idSelectedPeriod);
               return DateTime.parse(e[0]?.date ?? '').isBetween(
                 DateTime.parse(period?.dateStart ?? ''),
                 DateTime.parse(period?.dateEnd ?? ''),
@@ -122,65 +119,71 @@ class _ActualPageState extends State<ActualPage> {
               ),
             ),
           ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  child: FractionallySizedBox(
-                    widthFactor: 1.0,
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: _mainBloc.state.selectedPeriod,
-                        onChanged: (value) {
-                          setState(() {
-                            _mainBloc.add(ChangeSelectedPeriodEvent(id: value));
-                          });
-                        },
-                        items: listPeriod?.map((e) => DropdownMenuItem(
-                            value: e.id,
-                            child: Text(
-                              '${DateFormat('dd/MM/yyyy').format(DateTime.parse(e.dateStart ?? ''))} '
-                              '- ${DateFormat('dd/MM/yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
-                              style: Theme.of(context).textTheme.headline3?.copyWith(
-                                fontWeight: e.id == selectedPeriod
+          body: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                child: FractionallySizedBox(
+                  widthFactor: 1.0,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _mainBloc.state.selectedPeriod,
+                      onChanged: (value) {
+                        setState(() {
+                          _mainBloc.add(ChangeSelectedPeriodEvent(id: value));
+                        });
+                      },
+                      items: listPeriod?.map((e) => DropdownMenuItem(
+                          value: e.id,
+                          child: Text(
+                            '${DateFormat('dd/MM/yyyy').format(DateTime.parse(e.dateStart ?? ''))} '
+                                '- ${DateFormat('dd/MM/yyyy').format(DateTime.parse(e.dateEnd ?? ''))}',
+                            style: Theme.of(context).textTheme.headline3?.copyWith(
+                              fontWeight: e.id == idSelectedPeriod
                                   ? FontWeight.w600
                                   : FontWeight.normal,
-                              ),
-                            )
-                        )).toList() ?? [],
-                      ),
+                            ),
+                          )
+                      )).toList() ?? [],
                     ),
                   ),
                 ),
-                SizedBox(height: 12.h),
-                if (selectedPeriod != null) ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: listActualGrouped.length,
-                  itemBuilder: (_, index) {
-                    List<ActualEntity?> list = listActualGrouped[index];
+              ),
+              SizedBox(height: 12.h),
+              SingleChildScrollView(
+                child: Expanded(
+                  child: Column(
+                    children: [
+                      if (idSelectedPeriod != null) ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: listActualGrouped.length,
+                        itemBuilder: (_, index) {
+                          List<ActualEntity?> list = listActualGrouped[index];
 
-                    if (list.isNotEmpty) {
-                      return CardListActual(
-                        listActual: list,
-                        date: list[0]?.date ?? '',
-                      );
-                    }
+                          if (list.isNotEmpty) {
+                            return CardListActual(
+                              listActual: list,
+                              date: list[0]?.date ?? '',
+                            );
+                          }
 
-                    return Container();
-                  },
-                  separatorBuilder: (_, index) => SizedBox(height: 12.h),
+                          return Container();
+                        },
+                        separatorBuilder: (_, index) => SizedBox(height: 12.h),
+                      ),
+                      SizedBox(height: 12.h),
+                    ],
+                  ),
                 ),
-                SizedBox(height: 12.h),
-              ],
-            ),
+              ),
+            ],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
               await Navigator.pushNamed(
                 context,
-                RouteConstants.actualForm
+                RouteConstants.actualForm,
               );
               _actualBloc.add(const GetListActualEvent());
             },
